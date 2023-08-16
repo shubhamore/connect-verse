@@ -1,7 +1,10 @@
 import React from 'react'
+import Navbar from 'scenes/navbar/Navbar'
 
 export default function HomePage() {
   return (
-    <div>HomePage</div>
+    <div>
+      <Navbar/>
+    </div>
   )
 }
