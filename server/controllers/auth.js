@@ -5,6 +5,9 @@ import User from '../models/User.js';
 // Register
 export const register = async (req, res) => {
     try {
+        const emailExists = await User.findOne({ email: req.body.email });
+        if (emailExists) return res.status(409).json("Email already exists");
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 

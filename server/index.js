@@ -17,7 +17,7 @@ import Post from "./models/Post.js";
 // configurations
 dotenv.config();
 const app = express();
-app.use(express.json());
+// app.use(express.json());
 app.use(helmet());
 app.use(helmet.contentSecurityPolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));

@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import FlexBetween from 'components/FlexBetween'
 
 export default function Navbar() {
-  // Used when a new menu is required for mobile
+  /* Used when a new menu is required for mobile */
   // const [isMobileMenuToggled,setIsMobileMenuToggled] = useState(false)
   // const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
@@ -16,11 +16,12 @@ export default function Navbar() {
   const user= useSelector(state => state.user)
 
   const theme = useTheme()
-  const neutralLight = theme.palette.neutral.light
-  const dark = theme.palette.neutral.dark
-  const background = theme.palette.background.default
-  const primaryLight = theme.palette.primary.light
   const alt=theme.palette.background.alt
+  /* themes that are currently not used */
+  // const neutralLight = theme.palette.neutral.light
+  // const dark = theme.palette.neutral.dark
+  // const background = theme.palette.background.default
+  // const primaryLight = theme.palette.primary.light
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
