@@ -63,3 +63,17 @@ export const likePost = async (req, res) => {
         res.status(404).json(error)
     }
 }
+
+export const deletePost = async (req, res) => {
+    try{
+        const {postId}=req.body
+        const post=await Post.findByIdAndDelete(
+            postId,
+        )
+        const posts=await Post.find()
+        res.status(200).json(posts)
+    } catch(error){
+        console.log("error in deletePost",error)
+        res.status(404).json(error)
+    }
+}

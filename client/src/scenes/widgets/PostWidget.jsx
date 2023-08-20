@@ -1,11 +1,20 @@
 import React, { useState } from 'react'
 import { ChatBubbleOutlineOutlined, FavoriteBorderOutlined, FavoriteOutlined, ShareOutlined } from '@mui/icons-material'
-import { Box, Divider, IconButton, Typography, useTheme } from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Divider, IconButton, Typography, useTheme, Menu, MenuItem, Button } from '@mui/material'
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import FlexBetween from 'components/FlexBetween'
 import Connection from "components/Connection"
 import WidgetWrapper from 'components/WidgetWrapper'
 import { useDispatch, useSelector } from 'react-redux'
-import { setPost } from 'state'
+import { setPost, setPosts } from 'state'
+
 
 export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments }) {
     const [isComments, setIsComments] = useState(false)
@@ -18,6 +27,23 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
     const main = palette.neutral.main
     const primary = palette.primary.main
 
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const [openDialog, setOpenDialog] = React.useState(false);
+    const handleClickOpenDialog = () => {
+        setOpenDialog(true);
+    };
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
+
     const patchLike = async () => {
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/post/${postId}/like`, {
             method: "PATCH",
@@ -29,6 +55,21 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
         })
         const data = await response.json()
         dispatch(setPost({ post: data }))
+    }
+
+    const deletePost = async () => {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/post/delete`, {
+            method: "POST",
+            headers: { 
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+         },
+            body: JSON.stringify({ postId })
+        })
+        const data = await response.json()
+        handleClose()
+        handleCloseDialog()
+        dispatch(setPosts({ posts: data }))
     }
 
     return (
@@ -63,7 +104,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                             }}
                         >
                             {isLiked ? (
-                                <FavoriteOutlined sx={{color:primary}} />
+                                <FavoriteOutlined sx={{ color: primary }} />
                             ) : (
                                 <FavoriteBorderOutlined />
                             )}
@@ -90,20 +131,70 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                     </FlexBetween>
                 </FlexBetween>
 
-                <IconButton
-                    sx={{
-                        "&:hover": {
-                            color: primary
-                        }
-                    }}
-                >
-                    <ShareOutlined />
-                </IconButton>
+                <FlexBetween gap="0.3rem">
+                    <IconButton
+                        sx={{
+                            "&:hover": {
+                                color: primary
+                            }
+                        }}
+                    >
+                        <ShareOutlined />
+                    </IconButton>
+                    {loggedInUserId === userId && <div>
+                        <IconButton
+                            aria-controls={open ? 'long-menu' : undefined}
+                            aria-expanded={open ? 'true' : undefined}
+                            aria-haspopup="true"
+                            onClick={handleClick}
+                            sx={{
+                                "&:hover": {
+                                    color: primary
+                                }
+                            }}
+                        >
+                            <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                        >
+                            <MenuItem onClick={handleClose}><EditIcon sx={{ fontSize: '17.5px', marginRight: '10px' }} />Edit post</MenuItem>
+                            <MenuItem onClick={handleClickOpenDialog}><DeleteIcon sx={{ fontSize: '17.5px', marginRight: '10px' }} />Delete post</MenuItem>
+                        </Menu>
+                        <Dialog
+                            open={openDialog}
+                            onClose={handleCloseDialog}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                        >
+                            <DialogTitle>
+                                Are you sure you want to delete this post?
+                            </DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                This action cannot be undone.
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleCloseDialog}>Cancel</Button>
+                                <Button onClick={deletePost} autoFocus>
+                                    Delete
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+                    </div>}
+                </FlexBetween>
             </FlexBetween>
 
             {isComments && (
                 <Box mt="0.5rem">
-                    {comments.map((comment, index ) => (
+                    {comments.map((comment, index) => (
                         <Box key={Date.now() + crypto.randomUUID() + index}>
                             <Divider />
                             <Typography color={main} sx={{ m: "0.5rem" }}>
@@ -112,7 +203,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                         </Box>
                     ))}
                     <Divider />
-                    {comments.length===0&&(
+                    {comments.length === 0 && (
                         <>
                             <Typography color={main} sx={{ m: "0.5rem" }}>
                                 No comments yet

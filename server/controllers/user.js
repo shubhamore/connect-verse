@@ -4,7 +4,6 @@ export const getUser = async (req, res) => {
     try {
         const { id } = req.params;
         const user = await User.findById(id)
-        console.log("getUser is returning ",user,"for id",id)
         res.status(200).json(user);
     } catch (error) {
         console.log("error in getUser", error)
@@ -17,7 +16,6 @@ export const getUserConnections = async (req, res) => {
         const { id } = req.params;
         const user = await User.findById(id)
         const connections = await User.find({ _id: { $in: user.connections } }, { password: 0 })
-        console.log("returning connections",connections)
         res.status(200).json(connections);
     } catch (error) {
         console.log("error in getUserConnections", error)

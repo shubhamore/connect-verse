@@ -24,6 +24,7 @@ export default function HomePage() {
       >
         <Box flexBasis={isNonMobileScreen?"26%":undefined}>
           <UserWidget userId={_id} profilePicture={profilePicture}/>
+          <Box m="2rem 0"/>
           <ConnectionListWidget userId={_id}/>
         </Box>
         <Box

@@ -41,6 +41,7 @@ export default function ProfilePage() {
       >
         <Box flexBasis={isNonMobileScreen ? "26%" : undefined}>
           <UserWidget userId={userId} profilePicture={user.profilePicture} />
+          <Box m="2rem 0"/>
           <ConnectionListWidget userId={userId} />
         </Box>
         <Box
