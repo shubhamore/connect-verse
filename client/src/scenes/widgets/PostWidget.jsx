@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ChatBubbleOutlineOutlined, DeleteOutlined, EditOutlined,ImageOutlined, FavoriteBorderOutlined, FavoriteOutlined, ShareOutlined } from '@mui/icons-material'
+import { ChatBubbleOutlineOutlined, DeleteOutlined, EditOutlined, ImageOutlined, FavoriteBorderOutlined, FavoriteOutlined, ShareOutlined } from '@mui/icons-material'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Divider, IconButton, Typography, InputBase, useTheme, Menu, MenuItem, Button } from '@mui/material'
@@ -19,7 +19,7 @@ import Dropzone from 'react-dropzone'
 import TextField from '@mui/material/TextField';
 
 
-export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments }) {
+export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments, createdAt, updatedAt }) {
     const [isComments, setIsComments] = useState(false)
     const { palette } = useTheme()
     const dispatch = useDispatch()
@@ -151,7 +151,9 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                         src={postImg}
                     />
                 )}
-
+                {createdAt !== updatedAt && (
+                    <Typography color={palette.neutral.medium} sx={{ mt: "0.5rem",display:"flex", alignItems:"center" }}><EditOutlined sx={{fontSize:"17px",mr:"3.5px"}}/>Edited</Typography>
+                )}
                 <FlexBetween sx={{ mt: "0.25rem" }}>
                     <FlexBetween gap="1rem">
                         <FlexBetween gap="0.3rem">
@@ -343,7 +345,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
 
                     <Divider sx={{ margin: "1.25rem 0" }} />
 
-                    <Box gap="0.2rem" onClick={toggleImage} sx={{ display:'flex', "&:hover": { cursor: "pointer", color: palette.neutral.medium } }}>
+                    <Box gap="0.2rem" onClick={toggleImage} sx={{ display: 'flex', "&:hover": { cursor: "pointer", color: palette.neutral.medium } }}>
                         <ImageOutlined sx={{ color: palette.neutral.mediumMain }} />
                         <Typography color={palette.neutral.mediumMain}>{!isImage ? "Add" : "Remove"} Image</Typography>
                     </Box>
