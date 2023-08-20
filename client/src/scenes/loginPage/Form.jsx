@@ -97,7 +97,7 @@ export default function Form() {
             onSubmitProps.resetForm()
             dispatch(setLogin({
                 user: loggedIn.user,
-                token: loggedIn.token
+                token: loggedIn.accessToken
             }))
             navigate("/home")
         }
@@ -111,7 +111,6 @@ export default function Form() {
     }
 
     const handleFormSubmit = async (values, onSubmitProps) => {
-        console.log("received values", values)
         if (isLogin) await login(values, onSubmitProps)
         else await register(values, onSubmitProps)
     }

@@ -21,6 +21,7 @@ export const authSlice=createSlice({
         setLogout:(state)=>{
             state.user=null;
             state.token=null;
+            state.posts=[];
         },
         setConnection:(state,action)=>{
             if(state.user){
@@ -28,9 +29,10 @@ export const authSlice=createSlice({
             } else{
                 console.error("no friends :(")
             }
+            console.log("connections in state=",state.user.connections)
         },
         setPosts:(state,action)=>{
-            state.posts=action.payload.posts;
+            state.posts=action.payload.posts.sort().reverse();
         },
         setPost:(state,action)=>{
             const updatedPosts=state.posts.map((post)=>{
