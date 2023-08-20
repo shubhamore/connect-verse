@@ -14,6 +14,7 @@ import Connection from "components/Connection"
 import WidgetWrapper from 'components/WidgetWrapper'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPost, setPosts } from 'state'
+import { toast } from "react-toastify"
 
 
 export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments }) {
@@ -70,6 +71,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
         handleClose()
         handleCloseDialog()
         dispatch(setPosts({ posts: data }))
+        toast.success("Post deleted successfully")
     }
 
     return (

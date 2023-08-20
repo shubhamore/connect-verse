@@ -10,7 +10,7 @@ import state from 'state'
 
 export default function HomePage() {
   const isNonMobileScreen=useMediaQuery("(min-width:1000px")
-  const {_id,profilePicture}=useSelector(state=>state.user)
+  const {_id,profilePicture,name}=useSelector(state=>state.user)
 
   return (
     <div>
@@ -31,7 +31,7 @@ export default function HomePage() {
           flexBasis={isNonMobileScreen?"42%":undefined}
           mt={isNonMobileScreen?undefined:"2rem"}
         >
-          <MyPostWidget profilePicture={profilePicture}/>
+          <MyPostWidget name={name} profilePicture={profilePicture}/>
           <PostsWidget userId={_id}/>
         </Box>
         {isNonMobileScreen&&(
