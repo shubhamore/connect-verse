@@ -33,7 +33,7 @@ export default function HomePage() {
         >
           <MyPostWidget name={name} profilePicture={profilePicture}/>
           <Box m="2rem 0"/>
-          <PostsWidget userId={_id}/>
+          <PostsWidget Id={_id}/>
         </Box>
         {isNonMobileScreen&&(
           <Box flexBasis="26%">

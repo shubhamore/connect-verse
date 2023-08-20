@@ -25,7 +25,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     getUser()
-  }, [])
+  }, [userId])
 
   if (!user) return <div>Loading...</div>
 
@@ -48,7 +48,7 @@ export default function ProfilePage() {
           flexBasis={isNonMobileScreen ? "42%" : undefined}
           mt={isNonMobileScreen ? undefined : "2rem"}
         >
-          <PostsWidget userId={userId} isProfile={true}/>
+          <PostsWidget Id={userId} isProfile={true}/>
         </Box>
         {isNonMobileScreen && (
           <Box flexBasis="26%">

@@ -19,7 +19,7 @@ import Dropzone from 'react-dropzone'
 import TextField from '@mui/material/TextField';
 
 
-export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments, isEdited }) {
+export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments, isEdited, isProfile }) {
     const [isComments, setIsComments] = useState(false)
     const { palette } = useTheme()
     const dispatch = useDispatch()
@@ -137,6 +137,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                 <Connection
                     connectionId={userId}
                     name={name}
+                    showConnect={!isProfile}
                 />
                 <Typography color={main} sx={{ mt: "1rem" }}>
                     {desc}

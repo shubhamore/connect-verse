@@ -27,7 +27,7 @@ const UserWidget=({userId,profilePicture})=>{
 
     useEffect(()=>{
         getUser()
-    },[])
+    },[userId])
 
     if(!user) return null;
 

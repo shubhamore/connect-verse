@@ -8,7 +8,7 @@ import FlexBetween from './FlexBetween'
 import UserImage from './UserImage'
 
 
-export default function Connection({connectionId,name}) {
+export default function Connection({connectionId,name,showConnect=true}) {
     const {palette} = useTheme()
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -25,6 +25,7 @@ export default function Connection({connectionId,name}) {
     const isConnection=connections.find(connection=>connection._id===connectionId)
     
     const patchConnection = async (method) => {
+        console.log("patch connection pressed")
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/${_id}/${connectionId}`, {
             method:"PATCH",
             headers: { 
@@ -47,7 +48,7 @@ export default function Connection({connectionId,name}) {
 
     useEffect(()=>{
         getUser()
-    },[])
+    },[connectionId])
 
   return (
     <FlexBetween>
@@ -56,7 +57,7 @@ export default function Connection({connectionId,name}) {
             <Box
                 onClick={() =>{
                     navigate(`/profile/${connectionId}`)
-                    navigate(0)
+                    // navigate(0)
                 }}
             >
                 <Typography
@@ -77,7 +78,7 @@ export default function Connection({connectionId,name}) {
                 </Typography> */}
             </Box>
         </FlexBetween>
-        {connectionId!==_id&&<IconButton
+        {connectionId!==_id&&showConnect&&<IconButton
             onClick={() => patchConnection()}
             sx={{ backgroundColor: palette.primary.light,p:"0.6rem" }}
         >

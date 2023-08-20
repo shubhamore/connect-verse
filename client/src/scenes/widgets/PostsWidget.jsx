@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setPosts } from 'state'
 import PostWidget from './PostWidget'
 
-export default function PostsWidget({ userId, isProfile=false}) {
+export default function PostsWidget({ Id, isProfile=false}) {
     const dispatch = useDispatch()
     const token = useSelector(state => state.token)
     const posts = useSelector(state => state.posts)
@@ -14,22 +14,24 @@ export default function PostsWidget({ userId, isProfile=false}) {
             headers: { Authorization: `Bearer ${token}` }
         })
         const data = await response.json()
+        console.log("getPosts=",data)
         dispatch(setPosts({ posts: data }))
     }
 
     const getUserPosts = async () => {
-        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/post/${userId}`, {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/post/${Id}`, {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` }
         })
         const data = await response.json()
+        console.log("getUserPosts=",data)
         dispatch(setPosts({ posts: data }))
     }
 
     useEffect(() => {
         if (isProfile) getUserPosts()
         else getPosts()
-    }, [])
+    }, [Id])
 
     return (
         <>
@@ -45,6 +47,7 @@ export default function PostsWidget({ userId, isProfile=false}) {
                     likes={likes}
                     comments={comments}
                     isEdited={isEdited}
+                    isProfile={isProfile}
                 />
             ))}
         </>

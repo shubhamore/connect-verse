@@ -25,7 +25,7 @@ export default function ConnectionListWidget({userId}) {
 
     useEffect(()=>{
         getConnections()
-    },[])
+    },[userId])
 
   return (
     <WidgetWrapper>
