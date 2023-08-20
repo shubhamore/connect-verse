@@ -29,9 +29,10 @@ export default function ConnectionListWidget({userId}) {
 
   return (
     <WidgetWrapper>
-        <Typography color={palette.neutral.dark} variant="h5" fontWeight="500" sx={{mb:"1.5rem"}}>
+        <Typography color={palette.neutral.dark} variant="h5" fontWeight="500" sx={{mb:".25rem"}}>
             Connection List
         </Typography>
+        <Typography color={palette.neutral.medium} sx={{mb:"1rem"}}>{connections.length} connections</Typography>
         {!loading?<Box display='flex' flexDirection='column' gap='1.5rem'>
             {connections.map(connection=>(
                 <Connection

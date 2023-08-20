@@ -75,3 +75,21 @@ export const deletePost = async (req, res) => {
         res.status(404).json(error)
     }
 }
+
+export const editPost = async (req, res) => {
+    try{
+        const {postId, desc, postImg} = req.body
+        const post = await Post.findById(postId)
+        post.desc = desc
+        post.postImg = postImg
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            {desc: post.desc, postImg: post.postImg},
+            {new: true}
+        )
+        res.status(200).json(updatedPost)
+    } catch(error){
+        console.log("error in editPost", error)
+        res.status(404).json(error)
+    }
+}
