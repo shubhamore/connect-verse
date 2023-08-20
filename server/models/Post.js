@@ -11,11 +11,15 @@ const postSchema = new mongoose.Schema(
         postImg: String,
         likes: {
             type: Map,
-            of:Boolean
+            of: Boolean
         },
-        comments:{
-            type:Array,
-            default:[]
+        comments: {
+            type: Array,
+            default: []
+        },
+        isEdited: {
+            type: Boolean,
+            default: false
         }
     },
     { timestamps: true }

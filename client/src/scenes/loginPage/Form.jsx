@@ -14,6 +14,7 @@ const registerSchema = yup.object().shape({
     email: yup.string().email("Invalid email").required("This Field is required"),
     password: yup.string().min(6, "Password must contain minimum of 6 Characters").required("This Field is required"),
     name: yup.string().required("This Field is required"),
+    confirmPassword: yup.string().oneOf([yup.ref("password"), null], "Passwords must match").required("This Field is required"),
     profilePicture: yup.string()
 })
 
@@ -26,7 +27,8 @@ const initialValuesRegister = {
     name: "",
     email: "",
     password: "",
-    profilePicture: ""
+    profilePicture: "",
+    confirmPassword: ""
 }
 
 const initialValuesLogin = {
@@ -185,6 +187,18 @@ export default function Form() {
                                     onBlur={handleBlur}
                                     error={touched.password && Boolean(errors.password)}
                                     helperText={touched.password && errors.password}
+                                    sx={{ marginBottom: "1rem", width: "100%" }}
+                                />
+                                <TextField
+                                    label="Confirm Password"
+                                    type="password"
+                                    variant="outlined"
+                                    name="confirmPassword"
+                                    value={values.confirmPassword}
+                                    onChange={(e) => setFieldValue("confirmPassword", e.target.value)}
+                                    onBlur={handleBlur}
+                                    error={touched.confirmPassword && Boolean(errors.confirmPassword)}
+                                    helperText={touched.confirmPassword && errors.confirmPassword}
                                     sx={{ marginBottom: "1rem", width: "100%" }}
                                 />
                                 <Box

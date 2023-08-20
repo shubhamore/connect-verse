@@ -32,6 +32,7 @@ export default function HomePage() {
           mt={isNonMobileScreen?undefined:"2rem"}
         >
           <MyPostWidget name={name} profilePicture={profilePicture}/>
+          <Box m="2rem 0"/>
           <PostsWidget userId={_id}/>
         </Box>
         {isNonMobileScreen&&(

@@ -84,7 +84,7 @@ export const editPost = async (req, res) => {
         post.postImg = postImg
         const updatedPost = await Post.findByIdAndUpdate(
             postId,
-            {desc: post.desc, postImg: post.postImg},
+            {desc: post.desc, postImg: post.postImg, isEdited: true},
             {new: true}
         )
         res.status(200).json(updatedPost)
