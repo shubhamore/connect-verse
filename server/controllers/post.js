@@ -97,8 +97,9 @@ export const editPost = async (req, res) => {
 export const postComment = async (req, res) => {
     try{
         const {postId, userId, comment} = req.body
+        console.log("body=",req.body)
         const post = await Post.findById(postId)
-        post.comments.push(comment)
+        post.comments.unshift({comment, userId})
         const updatedPost = await Post.findByIdAndUpdate(
             postId,
             {comments: post.comments},

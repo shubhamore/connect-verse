@@ -13,10 +13,13 @@ const postSchema = new mongoose.Schema(
             type: Map,
             of: Boolean
         },
-        comments: {
-            type: Array,
-            default: []
-        },
+        comments: [
+            {
+                comment: String,
+                userId: String,
+                createdAt: { type: Date, default: Date.now }
+            }
+        ],
         isEdited: {
             type: Boolean,
             default: false

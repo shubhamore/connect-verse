@@ -19,6 +19,7 @@ import { toast } from "react-toastify"
 import Dropzone from 'react-dropzone'
 import TextField from '@mui/material/TextField';
 import moment from 'moment/moment';
+import Comment from 'components/Comment';
 
 export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments, isEdited, isProfile, createdAt }) {
     const [isComments, setIsComments] = useState(false)
@@ -276,14 +277,10 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                                 <SendIcon sx={{ color: "primary" }} />
                             </IconButton>
                         </div>
+                        <Divider />
 
                         {comments.map((comment, index) => (
-                            <Box key={Date.now() + crypto.randomUUID() + index}>
-                                <Divider />
-                                <Typography color={main} sx={{ m: "0.5rem" }}>
-                                    {comment}
-                                </Typography>
-                            </Box>
+                            <Comment key={`${comment.comment}-${comment.userId}-${comment.createdAt}`} comment={comment} />
                         ))}
                         <Divider />
                         {comments.length === 0 && (
@@ -291,7 +288,6 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                                 <Typography color={main} sx={{ m: "0.5rem" }}>
                                     No comments yet
                                 </Typography>
-                                <Divider />
                             </>
                         )}
                     </Box>
