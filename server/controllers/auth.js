@@ -64,7 +64,6 @@ export const verifyToken = async (req, res) => {
             }
             
             req.user = verified;
-            console.log("auth.js verifyToken verified", verified);
             res.status(200).json(true);
         });
     } catch (err) {

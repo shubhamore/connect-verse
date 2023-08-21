@@ -21,6 +21,7 @@ export default function HomePage() {
         display={isNonMobileScreen?"flex":"block"}
         gap="0.5rem"
         justifyContent="space-between"
+        // marginTop="5rem"
       >
         <Box flexBasis={isNonMobileScreen?"26%":undefined}>
           <UserWidget userId={_id} profilePicture={profilePicture}/>
