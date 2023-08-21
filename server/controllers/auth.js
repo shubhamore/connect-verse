@@ -45,3 +45,30 @@ export const login = async (req, res) => {
         res.status(500).json(err);
     }
 }
+
+// Verify
+export const verifyToken = async (req, res) => {
+    try {
+        let token = req.header("Authorization");
+
+        if (!token) return res.status(401).json("You are not authenticated");
+
+        if (token.startsWith("Bearer ")) {
+            token = token.slice(7, token.length).trimLeft();
+        }
+
+        jwt.verify(token, process.env.JWT_SECRET, (err, verified) => {
+            if (err) {
+                console.log("auth.js verifyToken error", err);
+                return res.status(401).json("Invalid token");
+            }
+            
+            req.user = verified;
+            console.log("auth.js verifyToken verified", verified);
+            res.status(200).json(true);
+        });
+    } catch (err) {
+        console.log("auth.js verify error", err);
+        res.status(500).json(err);
+    }
+}

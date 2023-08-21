@@ -1,14 +1,38 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Box, Typography, useTheme, IconButton } from '@mui/material'
-import { useDispatch } from 'react-redux'
-import { setMode } from "state"
+import { useSelector,useDispatch } from 'react-redux'
+import { setMode, setLogout } from "state"
+import { useNavigate } from 'react-router-dom'
 import { DarkMode, LightMode } from "@mui/icons-material"
 import Form from "./Form"
 
 export default function LoginPage() {
   const theme = useTheme()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const token=useSelector(state=>state.token)
+  if(token) navigate("/home")
 
+  const checkLogin=async()=>{
+    const data=localStorage.getItem("persist:root")
+
+    if(data){
+      const token=JSON.parse(JSON.parse(data).token)
+      const response=await fetch(`${process.env.REACT_APP_BASE_URL}/auth/verify`,{
+        method:"GET",
+        headers:{Authorization:`Bearer ${token}`}
+      })
+      const result=await response.json()
+      if(response.ok) navigate("/home")
+      else dispatch(setLogout())
+    }
+  }
+
+
+  useEffect(()=>{
+    checkLogin()
+  },[])
+  
   return (
     <Box>
       <Box
