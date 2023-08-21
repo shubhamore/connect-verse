@@ -18,9 +18,9 @@ import { setPost, setPosts } from 'state'
 import { toast } from "react-toastify"
 import Dropzone from 'react-dropzone'
 import TextField from '@mui/material/TextField';
+import moment from 'moment/moment';
 
-
-export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments, isEdited, isProfile }) {
+export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments, isEdited, isProfile,createdAt }) {
     const [isComments, setIsComments] = useState(false)
     const { palette } = useTheme()
     const dispatch = useDispatch()
@@ -31,6 +31,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
     const main = palette.neutral.main
     const primary = palette.primary.main
     const [comment, setComment] = useState("")
+    const time=moment(createdAt).fromNow()
 
     const [description, setDescription] = useState(desc)
     const [image, setImage] = useState(postImg)
@@ -154,6 +155,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                     connectionId={userId}
                     name={name}
                     showConnect={!isProfile}
+                    time={time}
                 />
                 <Typography color={main} sx={{ mt: "1rem" }}>
                     {desc}

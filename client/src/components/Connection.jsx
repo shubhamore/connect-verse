@@ -8,7 +8,7 @@ import FlexBetween from './FlexBetween'
 import UserImage from './UserImage'
 
 
-export default function Connection({connectionId,name,showConnect=true}) {
+export default function Connection({connectionId,name,showConnect=true,time=null}) {
     const {palette} = useTheme()
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -73,9 +73,7 @@ export default function Connection({connectionId,name,showConnect=true}) {
                 >
                     {name}
                 </Typography>
-                {/* <Typography color={medium} fontSize="0.75rem">
-                    {subtitle}
-                </Typography> */}
+                {time&&<Typography color={palette.neutral.medium}>{time}</Typography>}
             </Box>
         </FlexBetween>
         {connectionId!==_id&&showConnect&&<IconButton

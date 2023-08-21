@@ -36,7 +36,7 @@ export default function PostsWidget({ Id, isProfile=false}) {
     return (
         <>
         {console.log("posts=",posts)}
-            {posts.map(({ _id, userId, name, desc, postImg, likes, comments, isEdited }) => (
+            {posts.map(({ _id, userId, name, desc, postImg, likes, comments, isEdited,createdAt }) => (
                 <PostWidget
                     key={_id}
                     postId={_id}
@@ -48,6 +48,7 @@ export default function PostsWidget({ Id, isProfile=false}) {
                     comments={comments}
                     isEdited={isEdited}
                     isProfile={isProfile}
+                    createdAt={createdAt}
                 />
             ))}
         </>
