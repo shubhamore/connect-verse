@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { setConnection } from 'state'
 import FlexBetween from './FlexBetween'
 import UserImage from './UserImage'
-
+import CircleIcon from '@mui/icons-material/Circle';
 
 export default function Connection({connectionId,name,showConnect=true,time=null}) {
     const {palette} = useTheme()
