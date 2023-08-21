@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { ChatBubbleOutlineOutlined, DeleteOutlined, EditOutlined, ImageOutlined, FavoriteBorderOutlined, FavoriteOutlined, ShareOutlined } from '@mui/icons-material'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SendIcon from '@mui/icons-material/Send';
 import { Box, Divider, IconButton, Typography, InputBase, useTheme, Menu, MenuItem, Button } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Dialog from '@mui/material/Dialog';
@@ -29,6 +30,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
     const likeCount = Object.keys(likes).length
     const main = palette.neutral.main
     const primary = palette.primary.main
+    const [comment, setComment] = useState("")
 
     const [description, setDescription] = useState(desc)
     const [image, setImage] = useState(postImg)
@@ -118,6 +120,20 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
         toast.success("Post edited successfully")
     }
 
+    const postComment = async () => {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/post/comment`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ postId, userId: loggedInUserId, comment })
+        })
+        const data = await response.json()
+        dispatch(setPost({ post: data }))
+        setComment("")
+    }
+
     function convertToBase64(file) {
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();
@@ -153,7 +169,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                     />
                 )}
                 {isEdited && (
-                    <Typography color={palette.neutral.medium} sx={{ mt: "0.5rem",display:"flex", alignItems:"center" }}><EditOutlined sx={{fontSize:"17px",mr:"3.5px"}}/>Edited</Typography>
+                    <Typography color={palette.neutral.medium} sx={{ mt: "0.5rem", display: "flex", alignItems: "center" }}><EditOutlined sx={{ fontSize: "17px", mr: "3.5px" }} />Edited</Typography>
                 )}
                 <FlexBetween sx={{ mt: "0.25rem" }}>
                     <FlexBetween gap="1rem">
@@ -229,6 +245,30 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
 
                 {isComments && (
                     <Box mt="0.5rem">
+                        <div style={{
+                            position: 'relative',
+                            display: "inline-block",
+                            width: "100%",
+                            backgroundColor: palette.neutral.light,
+                            borderRadius: ".25rem",
+                            padding: '.5rem 1rem',
+                            margin: "1rem 0rem",
+                            display: "flex",
+                            alignItems: "flex-end",
+                            justifyContent: 'space-between'
+                        }}>
+                            <InputBase
+                                placeholder="Share your thoughts..."
+                                multiline
+                                onChange={e => setComment(e.target.value)}
+                                value={comment}
+                                sx={{ width: "100%" }}
+                            />
+                            <IconButton onClick={postComment} >
+                                <SendIcon sx={{ color: "primary" }} />
+                            </IconButton>
+                        </div>
+
                         {comments.map((comment, index) => (
                             <Box key={Date.now() + crypto.randomUUID() + index}>
                                 <Divider />

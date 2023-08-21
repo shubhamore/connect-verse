@@ -69,7 +69,6 @@ export default function MyPostWidget({ profilePicture, name }) {
     return (
         <WidgetWrapper>
             <Box gap="1.5rem">
-                {/* <UserImage image={profilePicture} /> */}
                 <Box gap="1rem" sx={{display:"flex",alignItems:"center",justifyContent:'flex-start'}}>
                     <UserImage image={profilePicture} />
                     <Typography

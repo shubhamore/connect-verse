@@ -93,3 +93,20 @@ export const editPost = async (req, res) => {
         res.status(404).json(error)
     }
 }
+
+export const postComment = async (req, res) => {
+    try{
+        const {postId, userId, comment} = req.body
+        const post = await Post.findById(postId)
+        post.comments.push(comment)
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            {comments: post.comments},
+            {new: true}
+        )
+        res.status(200).json(updatedPost)
+    } catch(error){
+        console.log("error in postComment", error)
+        res.status(404).json(error)
+    }
+}
