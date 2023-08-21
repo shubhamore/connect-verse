@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom';
 import HomePage from 'scenes/homePage/HomePage';
 import LoginPage from 'scenes/loginPage/LoginPage';
 import ProfilePage from 'scenes/profilePage/ProfilePage';
+import PostSharePage from 'scenes/PostSharePage/PostSharePage';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { CssBaseline, ThemeProvider } from '@mui/material';
@@ -24,6 +25,8 @@ function App() {
             <Route path="/" element={<LoginPage />} />
             <Route path="/home" element={isAuth?<HomePage />:<Navigate to="/"/>} />
             <Route path="/profile/:userId" element={isAuth?<ProfilePage />:<Navigate to="/"/>} />
+            <Route path="/post/:postId" element={isAuth?<PostSharePage />:<Navigate to="/"/>} />
+            <Route path="*" element={<Navigate to="/"/>} />
           </Routes>
           <ToastContainer
             position="top-center"

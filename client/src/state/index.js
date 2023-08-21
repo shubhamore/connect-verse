@@ -32,11 +32,19 @@ export const authSlice = createSlice({
             console.log("connections in state=", state.user.connections)
         },
         setPosts: (state, action) => {
-            state.posts = action.payload.posts.sort((a, b) => {
-                let da = new Date(a.createdAt),
-                    db = new Date(b.createdAt);
-                return db - da;
-            })
+            if (action.payload.posts.length === 0) {
+                console.error("no posts :(")
+            }
+            else if(action.payload.posts.length===1){
+                state.posts = action.payload.posts
+            }
+            else{
+                state.posts = action.payload.posts.sort((a, b) => {
+                    let da = new Date(a.createdAt),
+                        db = new Date(b.createdAt);
+                    return db - da;
+                })
+            }
         },
         setPost: (state, action) => {
             const updatedPosts = state.posts.map((post) => {

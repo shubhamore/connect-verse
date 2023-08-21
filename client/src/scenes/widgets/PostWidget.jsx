@@ -20,7 +20,7 @@ import Dropzone from 'react-dropzone'
 import TextField from '@mui/material/TextField';
 import moment from 'moment/moment';
 
-export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments, isEdited, isProfile,createdAt }) {
+export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments, isEdited, isProfile, createdAt }) {
     const [isComments, setIsComments] = useState(false)
     const { palette } = useTheme()
     const dispatch = useDispatch()
@@ -31,7 +31,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
     const main = palette.neutral.main
     const primary = palette.primary.main
     const [comment, setComment] = useState("")
-    const time=moment(createdAt).fromNow()
+    const time = moment(createdAt).fromNow()
 
     const [description, setDescription] = useState(desc)
     const [image, setImage] = useState(postImg)
@@ -148,6 +148,11 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
         })
     }
 
+    function copyToClipboard() {
+        navigator.clipboard.writeText(`${process.env.REACT_APP_FRONTEND_URL}/post/${postId}`)
+        toast.info("Post link copied to clipboard", { position: 'top-right' })
+    }
+
     return (
         <>
             <WidgetWrapper mb="2rem">
@@ -214,6 +219,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
 
                     <FlexBetween gap="0.3rem">
                         <IconButton
+                            onClick={copyToClipboard}
                             sx={{
                                 "&:hover": {
                                     color: primary

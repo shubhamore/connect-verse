@@ -110,3 +110,14 @@ export const postComment = async (req, res) => {
         res.status(404).json(error)
     }
 }
+
+export const getPost = async (req, res) => {
+    try{
+        const {postId} = req.params
+        const post = await Post.findById(postId)
+        res.status(200).json(post)
+    } catch(error){
+        console.log("error in getPost", error)
+        res.status(404).json(error)
+    }
+}
