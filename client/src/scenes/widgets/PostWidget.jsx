@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { ChatBubbleOutlineOutlined, DeleteOutlined, EditOutlined, ImageOutlined, FavoriteBorderOutlined, FavoriteOutlined, ShareOutlined } from '@mui/icons-material'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -22,6 +22,7 @@ import moment from 'moment/moment';
 import Comment from 'components/Comment';
 
 export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments, isEdited, isProfile, createdAt }) {
+    const [userData, setUserData] = useState({});
     const [isComments, setIsComments] = useState(false)
     const { palette } = useTheme()
     const dispatch = useDispatch()
@@ -33,6 +34,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
     const primary = palette.primary.main
     const [comment, setComment] = useState("")
     const time = moment(createdAt).fromNow()
+    const [loading, setLoading] = useState(true)
 
     const [description, setDescription] = useState(desc)
     const [image, setImage] = useState(postImg)
@@ -47,6 +49,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
         setIsImage(!isImage)
     }
 
+    // open menu for options
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -56,6 +59,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
         setAnchorEl(null);
     };
 
+    // open dialog for Delete
     const [openDialog, setOpenDialog] = React.useState(false);
     const handleClickOpenDialog = () => {
         setOpenDialog(true);
@@ -64,6 +68,8 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
         setOpenDialog(false);
         handleClose()
     };
+
+    // open dialog for Edit
     const [openDialog2, setOpenDialog2] = React.useState(false);
     const handleClickOpenDialog2 = () => {
         setOpenDialog2(true);
@@ -153,6 +159,40 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
         navigator.clipboard.writeText(`${process.env.REACT_APP_FRONTEND_URL}/post/${postId}`)
         toast.info("Post link copied to clipboard", { position: 'top-right' })
     }
+
+    useEffect(() => {
+        // Fetch user data for all comments when the component mounts
+        const fetchUserData = async () => {
+            try {
+                // Iterate through comments and fetch user data for each comment's user
+                for (const comment of comments) {
+                    const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/${comment.userId}`, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    });
+
+                    if (response.ok) {
+                        const userDataForComment = await response.json();
+                        console.log("userDataForComment=", userDataForComment)
+                        setUserData(prevData => ({
+                            ...prevData,
+                            [comment._id]: userDataForComment,
+                        }));
+                    } else {
+                        console.error(`Failed to fetch user data for comment with ID ${comment.id}`);
+                    }
+                }
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        };
+
+        fetchUserData();
+    }, [comments,token]);
 
     return (
         <>
@@ -256,7 +296,6 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                     <Box mt="0.5rem">
                         <div style={{
                             position: 'relative',
-                            display: "inline-block",
                             width: "100%",
                             backgroundColor: palette.neutral.light,
                             borderRadius: ".25rem",
@@ -273,14 +312,14 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                                 value={comment}
                                 sx={{ width: "100%" }}
                             />
-                            <IconButton onClick={postComment} >
+                            <IconButton onClick={postComment} disabled={!comment}>
                                 <SendIcon sx={{ color: "primary" }} />
                             </IconButton>
                         </div>
                         <Divider />
 
-                        {comments.map((comment, index) => (
-                            <Comment key={`${comment.comment}-${comment.userId}-${comment.createdAt}`} comment={comment} />
+                        {!loading&&comments.map((comment, index) => (
+                            userData[comment._id]&&<Comment key={`${comment._id}`} comment={comment} userData={userData[comment._id]} postId={postId} />
                         ))}
                         <Divider />
                         {comments.length === 0 && (

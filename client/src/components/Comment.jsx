@@ -1,39 +1,107 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Typography, useTheme } from '@mui/material'
+import { Box, Typography, useTheme, Menu, MenuItem, IconButton, Button } from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import UserImage from './UserImage'
 import { useDispatch, useSelector } from 'react-redux'
 import FlexBetween from 'components/FlexBetween'
 import { useNavigate } from 'react-router-dom'
+import TextField from '@mui/material/TextField';
 import moment from 'moment/moment';
+import { setPost, setPosts } from 'state'
 
-export default function Comment({ comment }) {
+
+export default function Comment({ comment, userData, postId }) {
+    const dispatch = useDispatch()
     const navigate = useNavigate()
     const [user, setUser] = useState({})
     const token = useSelector(state => state.token)
+    const loggedInUserId = useSelector(state => state.user._id)
     const [loading, setLoading] = useState(true)
     const { palette } = useTheme()
     const time = moment(comment.createdAt).fromNow()
+    const [newComment, setNewComment] = useState(comment.comment)
 
-    const getUser = async () => {
-        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/${comment.userId}`, {
-            method: "GET",
+    // open menu for options
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    // open dialog for Delete
+    const [openDialog, setOpenDialog] = React.useState(false);
+    const handleClickOpenDialog = () => {
+        setOpenDialog(true);
+    };
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        handleClose()
+    };
+
+    // open dialog for Edit
+    const [openDialog2, setOpenDialog2] = React.useState(false);
+    const handleClickOpenDialog2 = () => {
+        setOpenDialog2(true);
+    };
+    const handleCloseDialog2 = () => {
+        setOpenDialog2(false);
+        // setDescription(desc)
+        // setImage(postImg)
+        // setIsImage(postImg ? true : false)
+        // setImageName("Posted Image")
+        handleClose()
+    };
+
+    const deleteComment = async () => {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/post/deleteComment`, {
+            method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
+            body: JSON.stringify({
+                commentId: comment._id,
+                postId: postId
+            })
         })
         const data = await response.json()
-        setUser(data)
-        setLoading(false)
+        console.log(data)
+        dispatch(setPost({ post: data }))
     }
 
-    useEffect(() => {
-        getUser()
-    }, [])
+    const editComment = async () => {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/post/editComment`, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                comment: newComment,
+                commentId: comment._id,
+                postId: postId
+            })
+        })
+        const data = await response.json()
+        console.log(data)
+        handleClose()
+        setOpenDialog2(false)
+        dispatch(setPost({ post: data }))
+    }
 
     return (
         <>
-            {!loading ? <FlexBetween sx={{
+            <FlexBetween sx={{
                 backgroundColor: palette.neutral.light,
                 borderRadius: ".25rem",
                 padding: '.5rem 1rem',
@@ -41,41 +109,116 @@ export default function Comment({ comment }) {
                 alignItems: "flex-start"
             }}>
                 <Box
-                    sx={{cursor:"pointer"}}
+                    sx={{ cursor: "pointer" }}
                     onClick={() => {
                         navigate(`/profile/${comment.userId}`)
                     }}
                 >
-                    <UserImage image={user.profilePicture} size="30px" />
+                    <UserImage image={userData.profilePicture} size="30px" />
                 </Box>
                 <Box gap=".25rem" sx={{ display: 'flex', flex: '1', marginLeft: '5px', flexDirection: "column" }}>
-                    <Box
-                        sx={{ lineHeight: '1', minHeight: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
-                        onClick={() => {
-                            navigate(`/profile/${comment.userId}`)
-                        }}
-                    >
-                        <Typography
-                            color={palette.neutral.main}
-                            variant='h7'
-                            fontWeight="500"
-                            sx={{
-                                lineHeight: '1',
-                                "&:hover": {
-                                    cursor: "pointer",
-                                }
+                    <FlexBetween>
+                        <Box
+                            sx={{ lineHeight: '1', minHeight: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+                            onClick={() => {
+                                navigate(`/profile/${comment.userId}`)
                             }}
                         >
-                            {user.name}
-                        </Typography>
-                        {comment.createdAt && (<>
-                            <Typography color={palette.neutral.medium} sx={{ margin: "0", lineHeight: '1' }}>{time}</Typography>
-                        </>
-                        )}
-                    </Box>
+                            <Typography
+                                color={palette.neutral.main}
+                                variant='h7'
+                                fontWeight="500"
+                                sx={{
+                                    lineHeight: '1',
+                                    "&:hover": {
+                                        cursor: "pointer",
+                                    }
+                                }}
+                            >
+                                {userData.name}
+                            </Typography>
+                            {comment.createdAt && (<>
+                                <Typography color={palette.neutral.medium} sx={{ margin: "0", lineHeight: '1' }}>{time}</Typography>
+                            </>
+                            )}
+                        </Box>
+                        {loggedInUserId === comment.userId && <div>
+                            <IconButton
+                                onClick={handleClick}
+                                sx={{
+                                    "&:hover": {
+                                        color: palette.primary.main
+                                    }
+                                }}
+                            >
+                                <MoreVertIcon />
+                            </IconButton>
+                            <Menu
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                            >
+                                <MenuItem onClick={handleClickOpenDialog2}><EditIcon sx={{ fontSize: '17.5px', marginRight: '10px' }} />Edit comment</MenuItem>
+                                <MenuItem onClick={handleClickOpenDialog}><DeleteIcon sx={{ fontSize: '17.5px', marginRight: '10px' }} />Delete comment</MenuItem>
+                            </Menu>
+                        </div>}
+                    </FlexBetween>
                     <Typography>{comment.comment}</Typography>
                 </Box>
-            </FlexBetween> : <></>}
+            </FlexBetween>
+
+            {/* Delete post Dialog */}
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+            >
+                <DialogTitle>
+                    Are you sure you want to delete this comment?
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        This action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog}>Cancel</Button>
+                    <Button onClick={deleteComment} autoFocus>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Edit post Dialog */}
+            <Dialog
+                open={openDialog2}
+                onClose={handleCloseDialog2}
+                fullWidth
+            >
+                <DialogTitle>
+                    Edit comment
+                </DialogTitle>
+                <DialogContent>
+                    <Box gap="1.5rem">
+                        <TextField
+                            multiline
+                            onChange={e => setNewComment(e.target.value)}
+                            value={newComment}
+                            label="new-comment"
+                            sx={{
+                                width: "100%",
+                                backgroundColor: palette.neutral.light,
+                                marginTop: "1rem",
+                            }}
+                        />
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog2}>Cancel</Button>
+                    <Button onClick={editComment} autoFocus>
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     )
 }

@@ -122,3 +122,42 @@ export const getPost = async (req, res) => {
         res.status(404).json(error)
     }
 }
+
+export const deleteComment = async (req, res) => {
+    try{
+        const {postId, commentId} = req.body
+        const post = await Post.findById(postId)
+        post.comments = post.comments.filter((comment)=>comment._id.toString()!==commentId)
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            {comments: post.comments},
+            {new: true}
+        )
+        res.status(200).json(updatedPost)
+    } catch(error){
+        console.log("error in deleteComment", error)
+        res.status(404).json(error)
+    }
+}
+
+export const editComment = async (req, res) => {
+    try{
+        const {postId, commentId, comment} = req.body
+        const post = await Post.findById(postId)
+        post.comments = post.comments.map((c)=>{
+            if(c._id.toString()===commentId){
+                c.comment = comment
+            }
+            return c
+        })
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            {comments: post.comments},
+            {new: true}
+        )
+        res.status(200).json(updatedPost)
+    } catch(error){
+        console.log("error in editComment", error)
+        res.status(404).json(error)
+    }
+}
