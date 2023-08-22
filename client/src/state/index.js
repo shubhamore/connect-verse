@@ -32,10 +32,7 @@ export const authSlice = createSlice({
             console.log("connections in state=", state.user.connections)
         },
         setPosts: (state, action) => {
-            if (action.payload.posts.length === 0) {
-                console.error("no posts :(")
-            }
-            else if(action.payload.posts.length===1){
+            if(action.payload.posts.length===1){
                 state.posts = action.payload.posts
             }
             else{
