@@ -4,6 +4,7 @@ import User from "../models/User.js";
 export const createPost = async (req, res) => {
     try {
         const { userId, desc, postImg } = req.body;
+        if (desc.length > 4000) return res.status(422).json("desc can't be more than 4000 characters")
         const user = await User.findById(userId);
         const newPost = new Post({
             userId,
@@ -77,86 +78,88 @@ export const deletePost = async (req, res) => {
 }
 
 export const editPost = async (req, res) => {
-    try{
-        const {postId, desc, postImg} = req.body
+    try {
+        const { postId, desc, postImg } = req.body
+        if (desc.length > 4000) return res.status(422).json("desc can't be more than 4000 characters")
         const post = await Post.findById(postId)
         post.desc = desc
         post.postImg = postImg
         const updatedPost = await Post.findByIdAndUpdate(
             postId,
-            {desc: post.desc, postImg: post.postImg, isEdited: true},
-            {new: true}
+            { desc: post.desc, postImg: post.postImg, isEdited: true },
+            { new: true }
         )
         res.status(200).json(updatedPost)
-    } catch(error){
+    } catch (error) {
         console.log("error in editPost", error)
         res.status(404).json(error)
     }
 }
 
 export const postComment = async (req, res) => {
-    try{
-        const {postId, userId, comment} = req.body
-        console.log("body=",req.body)
+    try {
+        const { postId, userId, comment } = req.body
+        if (comment.length > 2500) return res.status(422).json("comment can't be more than 2500 characters")
         const post = await Post.findById(postId)
-        post.comments.unshift({comment, userId})
+        post.comments.unshift({ comment, userId })
         const updatedPost = await Post.findByIdAndUpdate(
             postId,
-            {comments: post.comments},
-            {new: true}
+            { comments: post.comments },
+            { new: true }
         )
         res.status(200).json(updatedPost)
-    } catch(error){
+    } catch (error) {
         console.log("error in postComment", error)
         res.status(404).json(error)
     }
 }
 
 export const getPost = async (req, res) => {
-    try{
-        const {postId} = req.params
+    try {
+        const { postId } = req.params
         const post = await Post.findById(postId)
         res.status(200).json(post)
-    } catch(error){
+    } catch (error) {
         console.log("error in getPost", error)
         res.status(404).json(error)
     }
 }
 
 export const deleteComment = async (req, res) => {
-    try{
-        const {postId, commentId} = req.body
+    try {
+        const { postId, commentId } = req.body
         const post = await Post.findById(postId)
-        post.comments = post.comments.filter((comment)=>comment._id.toString()!==commentId)
+        post.comments = post.comments.filter((comment) => comment._id.toString() !== commentId)
         const updatedPost = await Post.findByIdAndUpdate(
             postId,
-            {comments: post.comments},
-            {new: true}
+            { comments: post.comments },
+            { new: true }
         )
         res.status(200).json(updatedPost)
-    } catch(error){
+    } catch (error) {
         console.log("error in deleteComment", error)
         res.status(404).json(error)
     }
 }
 
 export const editComment = async (req, res) => {
-    try{
-        const {postId, commentId, comment} = req.body
+    try {
+        const { postId, commentId, comment } = req.body
+        if (comment.length > 2500) return res.status(422).json("comment can't be more than 2500 characters")
         const post = await Post.findById(postId)
-        post.comments = post.comments.map((c)=>{
-            if(c._id.toString()===commentId){
+        post.comments = post.comments.map((c) => {
+            if (c._id.toString() === commentId) {
                 c.comment = comment
             }
             return c
         })
         const updatedPost = await Post.findByIdAndUpdate(
             postId,
-            {comments: post.comments},
-            {new: true}
+            { comments: post.comments },
+            { new: true }
         )
         res.status(200).json(updatedPost)
-    } catch(error){
+    } catch (error) {
         console.log("error in editComment", error)
         res.status(404).json(error)
     }
