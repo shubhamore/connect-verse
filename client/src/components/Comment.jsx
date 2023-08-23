@@ -27,6 +27,20 @@ export default function Comment({ comment, userData, postId }) {
     const { palette } = useTheme()
     const time = moment(comment.createdAt).fromNow()
     const [newComment, setNewComment] = useState(comment.comment)
+    const [displayedChars, setDisplayedChars] = useState(350); 
+    const increment = 1000; 
+
+    const toggleShowMore = () => {
+        setDisplayedChars(displayedChars + increment);
+    };
+
+    const resetDisplay = () => {
+        setDisplayedChars(350); 
+    };
+
+    const isCompleteDisplay = displayedChars >= comment.comment.length; 
+    const isShortComment = comment.comment.length <= 350;
+
 
     // open menu for options
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -163,7 +177,20 @@ export default function Comment({ comment, userData, postId }) {
                             </Menu>
                         </div>}
                     </FlexBetween>
-                    <Typography>{comment.comment}</Typography>
+                    <Typography>{comment.comment.slice(0, displayedChars)}
+                        {isCompleteDisplay ? (
+                            <>
+                                {isShortComment ? null : (
+                                    <Button style={{ backgroundColor: 'transparent' }} variant="text" onClick={resetDisplay}>See Less</Button>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                {comment.comment.length > displayedChars && (
+                                    <Button style={{ backgroundColor: 'transparent' }} variant="raised" onClick={toggleShowMore}>... Show More</Button>
+                                )}
+                            </>
+                        )}</Typography>
                 </Box>
             </FlexBetween>
 

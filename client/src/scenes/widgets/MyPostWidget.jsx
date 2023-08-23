@@ -93,6 +93,7 @@ export default function MyPostWidget({ profilePicture, name }) {
                     }}
                 />
             </Box>
+            {post.length>4000&&<Typography color="error.main">Post can't be more than 4000 characters</Typography>}
             {isImage && <Box
                 border={`1px solid ${medium}`}
                 borderRadius="5px"
@@ -151,7 +152,7 @@ export default function MyPostWidget({ profilePicture, name }) {
                     <Typography color={mediumMain}>{!isImage ? "Add" : "Remove"} Image</Typography>
                 </FlexBetween>
                 <Button
-                    disabled={!post}
+                    disabled={!post || post.length>4000}
                     onClick={handlePost}
                     sx={{
                         backgroundColor: palette.primary.main,

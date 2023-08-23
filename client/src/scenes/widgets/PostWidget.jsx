@@ -43,11 +43,11 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
     };
 
     const resetDisplay = () => {
-        setDisplayedChars(200); // Reset to the initial 200 characters
+        setDisplayedChars(500); // Reset to the initial 500 characters
     };
 
     const isCompleteDisplay = displayedChars >= desc.length; // Check if complete content is displayed
-    const isShortDesc = desc.length <= 200; // Check if desc is short
+    const isShortDesc = desc.length <= 500; // Check if desc is short
 
 
     const [description, setDescription] = useState(desc)
@@ -219,20 +219,20 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                 />
                 <Typography color={main} sx={{ mt: "1rem" }}>
                     <Typography color={main} sx={{ mt: "1rem" }}>
-                    {desc.slice(0, displayedChars)}
-                    {isCompleteDisplay ? (
-                        <>
-                            {isShortDesc ? null : (
-                                <Button style={{ backgroundColor: 'transparent' }} variant="text" onClick={resetDisplay}>See Less</Button>
-                            )}
-                        </>
-                    ) : (
-                        <>
-                            {desc.length > displayedChars && (
-                                <Button style={{ backgroundColor: 'transparent' }} variant="raised" onClick={toggleShowMore}>... Show More</Button>
-                            )}
-                        </>
-                    )}
+                        {desc.slice(0, displayedChars)}
+                        {isCompleteDisplay ? (
+                            <>
+                                {isShortDesc ? null : (
+                                    <Button style={{ backgroundColor: 'transparent' }} variant="text" onClick={resetDisplay}>See Less</Button>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                {desc.length > displayedChars && (
+                                    <Button style={{ backgroundColor: 'transparent' }} variant="raised" onClick={toggleShowMore}>... Show More</Button>
+                                )}
+                            </>
+                        )}
                     </Typography>
                 </Typography>
                 {postImg && (
@@ -341,10 +341,11 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                                 value={comment}
                                 sx={{ width: "100%" }}
                             />
-                            <IconButton onClick={postComment} disabled={!comment}>
+                            <IconButton onClick={postComment} disabled={!comment || comment.length > 2500}>
                                 <SendIcon sx={{ color: "primary" }} />
                             </IconButton>
                         </div>
+                        {comment.length > 2500 && <Typography color="error.main">Comment can't be more than 2500 characters</Typography>}
                         <Divider />
 
                         {!loading && comments.map((comment, index) => (
