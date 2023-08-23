@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ChatBubbleOutlineOutlined, DeleteOutlined, EditOutlined, ImageOutlined, FavoriteBorderOutlined, FavoriteOutlined, ShareOutlined } from '@mui/icons-material'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -35,6 +35,20 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
     const [comment, setComment] = useState("")
     const time = moment(createdAt).fromNow()
     const [loading, setLoading] = useState(true)
+    const [displayedChars, setDisplayedChars] = useState(500); // Initial number of characters to display
+    const increment = 1250; // Number of characters to show when "Show More" is clicked
+
+    const toggleShowMore = () => {
+        setDisplayedChars(displayedChars + increment);
+    };
+
+    const resetDisplay = () => {
+        setDisplayedChars(200); // Reset to the initial 200 characters
+    };
+
+    const isCompleteDisplay = displayedChars >= desc.length; // Check if complete content is displayed
+    const isShortDesc = desc.length <= 200; // Check if desc is short
+
 
     const [description, setDescription] = useState(desc)
     const [image, setImage] = useState(postImg)
@@ -192,7 +206,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
         };
 
         fetchUserData();
-    }, [comments,token]);
+    }, [comments, token]);
 
     return (
         <>
@@ -204,7 +218,22 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                     time={time}
                 />
                 <Typography color={main} sx={{ mt: "1rem" }}>
-                    {desc}
+                    <Typography color={main} sx={{ mt: "1rem" }}>
+                    {desc.slice(0, displayedChars)}
+                    {isCompleteDisplay ? (
+                        <>
+                            {isShortDesc ? null : (
+                                <Button style={{ backgroundColor: 'transparent' }} variant="text" onClick={resetDisplay}>See Less</Button>
+                            )}
+                        </>
+                    ) : (
+                        <>
+                            {desc.length > displayedChars && (
+                                <Button style={{ backgroundColor: 'transparent' }} variant="raised" onClick={toggleShowMore}>... Show More</Button>
+                            )}
+                        </>
+                    )}
+                    </Typography>
                 </Typography>
                 {postImg && (
                     <img
@@ -318,8 +347,8 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                         </div>
                         <Divider />
 
-                        {!loading&&comments.map((comment, index) => (
-                            userData[comment._id]&&<Comment key={`${comment._id}`} comment={comment} userData={userData[comment._id]} postId={postId} />
+                        {!loading && comments.map((comment, index) => (
+                            userData[comment._id] && <Comment key={`${comment._id}`} comment={comment} userData={userData[comment._id]} postId={postId} />
                         ))}
                         <Divider />
                         {comments.length === 0 && (
