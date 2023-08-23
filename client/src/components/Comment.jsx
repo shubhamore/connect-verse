@@ -242,7 +242,7 @@ export default function Comment({ comment, userData, postId }) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog2}>Cancel</Button>
-                    <Button onClick={editComment} autoFocus>
+                    <Button onClick={editComment} disabled={newComment.length>2500 || newComment===comment.comment} autoFocus>
                         Save
                     </Button>
                 </DialogActions>

@@ -469,7 +469,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog2}>Cancel</Button>
-                    <Button onClick={editPost} disabled={description.length>4000} autoFocus>
+                    <Button onClick={editPost} disabled={description.length>4000||(image===postImg&&desc===description)} autoFocus>
                         Save
                     </Button>
                 </DialogActions>
