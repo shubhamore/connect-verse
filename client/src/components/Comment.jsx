@@ -181,13 +181,13 @@ export default function Comment({ comment, userData, postId }) {
                         {isCompleteDisplay ? (
                             <>
                                 {isShortComment ? null : (
-                                    <Button style={{ backgroundColor: 'transparent' }} variant="text" onClick={resetDisplay}>See Less</Button>
+                                    <Button style={{ backgroundColor: 'transparent',padding:"0px 5px" }} variant="text" onClick={resetDisplay}>See Less</Button>
                                 )}
                             </>
                         ) : (
                             <>
                                 {comment.comment.length > displayedChars && (
-                                    <Button style={{ backgroundColor: 'transparent' }} variant="raised" onClick={toggleShowMore}>... Show More</Button>
+                                    <Button style={{ backgroundColor: 'transparent',padding:"0px 5px" }} variant="raised" onClick={toggleShowMore}>... Show More</Button>
                                 )}
                             </>
                         )}</Typography>
@@ -238,6 +238,7 @@ export default function Comment({ comment, userData, postId }) {
                             }}
                         />
                     </Box>
+                    {newComment.length >2500 && <Typography color="error.main">Comment can't be more than 2500 characters</Typography>}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog2}>Cancel</Button>

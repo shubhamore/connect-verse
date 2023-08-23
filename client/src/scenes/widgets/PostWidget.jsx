@@ -223,13 +223,13 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                         {isCompleteDisplay ? (
                             <>
                                 {isShortDesc ? null : (
-                                    <Button style={{ backgroundColor: 'transparent' }} variant="text" onClick={resetDisplay}>See Less</Button>
+                                    <Button style={{ backgroundColor: 'transparent', padding:'0px 5px' }} variant="text" onClick={resetDisplay}>See Less</Button>
                                 )}
                             </>
                         ) : (
                             <>
                                 {desc.length > displayedChars && (
-                                    <Button style={{ backgroundColor: 'transparent' }} variant="raised" onClick={toggleShowMore}>... Show More</Button>
+                                    <Button style={{ backgroundColor: 'transparent', padding:'0px 5px' }} variant="raised" onClick={toggleShowMore}>... Show More</Button>
                                 )}
                             </>
                         )}
@@ -407,6 +407,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                             }}
                         />
                     </Box>
+                    {description.length > 4000 && <Typography color="error.main">Post can't be more than 4000 characters</Typography>}
                     {isImage && <Box
                         border={`1px solid ${palette.neutral.medium}`}
                         borderRadius="5px"
@@ -468,7 +469,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog2}>Cancel</Button>
-                    <Button onClick={editPost} autoFocus>
+                    <Button onClick={editPost} disabled={description.length>4000} autoFocus>
                         Save
                     </Button>
                 </DialogActions>
