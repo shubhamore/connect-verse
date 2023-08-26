@@ -8,7 +8,7 @@ import FlexBetween from './FlexBetween'
 import UserImage from './UserImage'
 import CircleIcon from '@mui/icons-material/Circle';
 
-export default function Connection({connectionId,name,showConnect=true,time=null,profilePicture=null}) {
+export default function Connection({connectionId,name,showConnect=false,time=null,profilePicture=null}) {
     const {palette} = useTheme()
     const dispatch = useDispatch()
     const navigate = useNavigate()

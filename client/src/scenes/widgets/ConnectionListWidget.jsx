@@ -8,13 +8,13 @@ import { setConnection } from 'state'
 import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 import FlexBetween from 'components/FlexBetween'
 
-export default function ConnectionListWidget({ userId }) {
+export default function ConnectionListWidget({ userId,showConnect=false }) {
     const { palette } = useTheme()
     const dispatch = useDispatch()
     const token = useSelector(state => state.token)
     const connections = useSelector(state => state.user.connections)
     const [loading, setLoading] = React.useState(true)
-    const [show, setShow] = useState(false);
+    const [show, setShow] = useState(true);
     
     const getConnections = async () => {
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/connections/${userId}`, {
@@ -72,6 +72,7 @@ export default function ConnectionListWidget({ userId }) {
                                 connectionId={connection._id}
                                 name={connection.name}
                                 profilePicture={connection.profilePicture}
+                                showConnect={showConnect}
                             />
                         ))}
                         {connections.length === 0 && <Typography color={palette.neutral.dark}>No connections yet</Typography>}

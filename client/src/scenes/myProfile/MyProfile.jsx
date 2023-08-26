@@ -177,7 +177,7 @@ export default function MyProfile() {
                         </>)} */}
                     </WidgetWrapper>
                     <Box mt="2rem" />
-                    {/* <ConnectionListWidget userId={user._id} /> */}
+                    <ConnectionListWidget userId={user._id} />
                 </Box>
             </Box>
             <Dialog

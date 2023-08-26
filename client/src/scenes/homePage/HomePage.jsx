@@ -5,6 +5,7 @@ import Navbar from 'scenes/navbar/Navbar'
 import ConnectionListWidget from 'scenes/widgets/ConnectionListWidget'
 import MyPostWidget from 'scenes/widgets/MyPostWidget'
 import PostsWidget from 'scenes/widgets/PostsWidget'
+import SideWidget from 'scenes/widgets/SideWidget'
 import UserWidget from 'scenes/widgets/UserWidget'
 import state from 'state'
 
@@ -24,9 +25,9 @@ export default function HomePage() {
         // marginTop="5rem"
       >
         {isNonMobileScreen&&<Box flexBasis={isNonMobileScreen?"26%":undefined}>
-          <UserWidget userId={_id} profilePicture={profilePicture}/>
+          {/* <UserWidget userId={_id} profilePicture={profilePicture}/> */}
+          <SideWidget userId={_id} showAbout={false} />
           <Box m="2rem 0"/>
-          <ConnectionListWidget userId={_id}/>
         </Box>}
         <Box
           flexBasis={isNonMobileScreen?"42%":undefined}
@@ -38,6 +39,7 @@ export default function HomePage() {
         </Box>
         {isNonMobileScreen&&(
           <Box flexBasis="26%">
+          <ConnectionListWidget userId={_id} showConnect={true}/>
             
           </Box>
         )}

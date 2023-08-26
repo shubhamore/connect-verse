@@ -15,8 +15,17 @@ export const authSlice = createSlice({
             state.mode = state.mode === 'light' ? 'dark' : 'light';
         },
         setLogin: (state, action) => {
-            state.user = action.payload.user;
-            state.token = action.payload.token
+            // Merge the payload user's properties with the existing user
+            if (state.user) {
+                state.user = {
+                    ...state.user, // Keep existing properties
+                    ...action.payload.user, // Overwrite with new properties
+                    connections: state.user.connections // Keep connections as is
+                };
+            } else {
+                state.user = action.payload.user;
+            }
+            state.token = action.payload.token;
         },
         setLogout: (state) => {
             state.user = null;
