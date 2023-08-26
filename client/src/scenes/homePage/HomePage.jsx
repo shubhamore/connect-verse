@@ -23,14 +23,14 @@ export default function HomePage() {
         justifyContent="space-between"
         // marginTop="5rem"
       >
-        <Box flexBasis={isNonMobileScreen?"26%":undefined}>
+        {isNonMobileScreen&&<Box flexBasis={isNonMobileScreen?"26%":undefined}>
           <UserWidget userId={_id} profilePicture={profilePicture}/>
           <Box m="2rem 0"/>
           <ConnectionListWidget userId={_id}/>
-        </Box>
+        </Box>}
         <Box
           flexBasis={isNonMobileScreen?"42%":undefined}
-          mt={isNonMobileScreen?undefined:"2rem"}
+          // mt={isNonMobileScreen?undefined:"2rem"}
         >
           <MyPostWidget name={name} profilePicture={profilePicture}/>
           <Box m="2rem 0"/>
