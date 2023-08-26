@@ -29,7 +29,7 @@ export default function ConnectionListWidget({ userId }) {
     useEffect(() => {
         if(token)
         getConnections()
-    }, [userId])
+    }, [userId,token])
     
     if(!connections) return null
 
@@ -71,6 +71,7 @@ export default function ConnectionListWidget({ userId }) {
                                 key={connection._id}
                                 connectionId={connection._id}
                                 name={connection.name}
+                                profilePicture={connection.profilePicture}
                             />
                         ))}
                         {connections.length === 0 && <Typography color={palette.neutral.dark}>No connections yet</Typography>}
