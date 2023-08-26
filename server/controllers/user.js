@@ -48,3 +48,23 @@ export const addRemoveConnection = async (req, res) => {
         res.status(404).json({ message: error.message });
     }
 }
+
+export const editUser = async (req, res) => {
+    try{
+        const {userId,name,about,location,occupation,organization,profilePicture} = req.body
+        console.log("req.body",req.body)
+        const user =await User.findById(userId)
+        user.name = name
+        user.about = about
+        user.location = location
+        user.occupation = occupation
+        user.organization = organization
+        user.profilePicture = profilePicture
+        await user.save()
+        res.status(200).json(user)
+
+    } catch (error){
+        console.log("error in editUser", error)
+        res.status(404).json({ message: error.message });
+    }
+}

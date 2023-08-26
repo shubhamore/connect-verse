@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPosts } from 'state'
 import PostWidget from './PostWidget'
+import WidgetWrapper from 'components/WidgetWrapper'
 
 export default function PostsWidget({ Id, isProfile=false}) {
     const dispatch = useDispatch()
@@ -35,8 +36,7 @@ export default function PostsWidget({ Id, isProfile=false}) {
 
     return (
         <>
-        {console.log("posts=",posts)}
-            {posts.map(({ _id, userId, name, desc, postImg, likes, comments, isEdited,createdAt }) => (
+            {posts.length?posts.map(({ _id, userId, name, desc, postImg, likes, comments, isEdited,createdAt }) => (
                 <PostWidget
                     key={_id}
                     postId={_id}
@@ -50,7 +50,7 @@ export default function PostsWidget({ Id, isProfile=false}) {
                     isProfile={isProfile}
                     createdAt={createdAt}
                 />
-            ))}
+            )):<WidgetWrapper sx={{padding:"1.5rem"}}>Oops! It seems this user hasn't posted any content yet. Check back later for updates.</WidgetWrapper>}
         </>
     )
 }

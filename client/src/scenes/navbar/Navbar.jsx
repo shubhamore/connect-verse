@@ -1,12 +1,24 @@
-import { useState, useEffect } from 'react'
-import { Box, IconButton, InputBase, Typography, Select, MenuItem, FormControl, useTheme, useMediaQuery } from "@mui/material"
-import { Search, Message, DarkMode, LightMode, Notifications, Help, Menu, Close, Logout } from "@mui/icons-material"
+import React, { useState, useEffect } from 'react'
+import { Box, IconButton, InputBase, Typography, Select, Menu,MenuItem, FormControl, useTheme, useMediaQuery } from "@mui/material"
+import { Search, Message, DarkMode, LightMode, Notifications, Help, Close, Logout } from "@mui/icons-material"
 import { useDispatch, useSelector } from 'react-redux'
 import { setMode, setLogout } from "state"
 import { useNavigate } from 'react-router-dom'
 import FlexBetween from 'components/FlexBetween'
+import UserImage from 'components/UserImage'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 
 export default function Navbar() {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   /* Used when a new menu is required for mobile */
   // const [isMobileMenuToggled,setIsMobileMenuToggled] = useState(false)
   // const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
@@ -14,6 +26,7 @@ export default function Navbar() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const user = useSelector(state => state.user)
+  const {profilePicture}=useSelector(state=>state.user)
 
   const theme = useTheme()
   const alt = theme.palette.background.alt
@@ -94,9 +107,22 @@ export default function Navbar() {
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? <DarkMode color='primary' sx={{ fontSize: "25px" }} /> : <LightMode sx={{ fontSize: "25px", color: "#ffbc00" }} />}
           </IconButton>
-          <IconButton onClick={() => dispatch(setLogout())}>
-            <Logout sx={{ fontSize: "25px", color: "red" }} />
+          <IconButton onClick={handleClick} style={{borderRadius:"0%"}}>
+              <UserImage image={profilePicture} size={"35px"} />
+              <ArrowDropDownIcon/>
           </IconButton>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              <MenuItem onClick={()=>navigate("/myProfile")}><PersonOutlineIcon sx={{mr:"5px",fontSize:"22.5px"}}/>Profile</MenuItem>
+              <MenuItem onClick={()=>dispatch(setLogout())}><Logout sx={{mr:"5px",fontSize:"22.5px"}}/>Logout</MenuItem>
+            </Menu>
         </FlexBetween>
       </FlexBetween>
       <Box m="5rem 0" />
