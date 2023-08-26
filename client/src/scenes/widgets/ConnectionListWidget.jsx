@@ -14,7 +14,7 @@ export default function ConnectionListWidget({ userId,showConnect=false }) {
     const token = useSelector(state => state.token)
     const connections = useSelector(state => state.user.connections)
     const [loading, setLoading] = React.useState(true)
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(showConnect);
     
     const getConnections = async () => {
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/connections/${userId}`, {

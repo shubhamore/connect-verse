@@ -20,8 +20,11 @@ import Toolbar from '@mui/material/Toolbar';
 import CloseIcon from '@mui/icons-material/Close';
 import Dropzone from 'react-dropzone'
 import { setLogin } from 'state'
+import SideWidget from 'scenes/widgets/SideWidget'
+import { useParams } from 'react-router-dom'
 
-export default function MyProfile() {
+export default function MyProfile({isUser=false}) {
+    const {userId}=useParams()
     const { palette } = useTheme()
     const dispatch = useDispatch()
     const token = useSelector(state => state.token)
@@ -114,7 +117,8 @@ export default function MyProfile() {
             <Box mt="6.5rem" />
             <Box>
                 <Box sx={{ width: '850px', margin: "0 auto", maxWidth: "90vw" }}>
-                    <WidgetWrapper style={{ position: 'relative' }}>
+                    <SideWidget userId={isUser?user._id:userId} showEditBtn={isUser}/>
+                    {/* <WidgetWrapper style={{ position: 'relative' }}>
                         <Box sx={{ position: 'absolute', right: '1.5rem' }}>
                             <IconButton sx={{ backgroundColor: palette.neutral.light }} onClick={handleClickOpen}>
                                 <EditIcon sx={{ fontSize: '1.5rem' }} />
@@ -150,34 +154,9 @@ export default function MyProfile() {
                         <Typography variant="h6" sx={{ margin: '15px 0', display: 'flex', alignItems: 'center' }}><WorkIcon sx={{ mr: "5px" }} />: {user.occupation ? user.occupation : <Typography color={palette.neutral.medium} > N/A</Typography>}</Typography>
                         <Typography variant="h6" sx={{ margin: '15px 0', display: 'flex', alignItems: 'center' }}><CorporateFareIcon sx={{ mr: "5px" }} />: {user.organization ? user.organization : <Typography color={palette.neutral.medium} > N/A</Typography>}</Typography>
                         <Typography variant="h6" sx={{ margin: '15px 0', display: 'flex', alignItems: 'center' }}><LocationOnIcon sx={{ mr: "5px" }} />: {user.location ? user.location : <Typography color={palette.neutral.medium} > N/A</Typography>}</Typography>
-                        {/* {user.about && (<>
-                            <Divider sx={{ margin: '15px 0' }} />
-                            <Typography variant="h6" sx={{ margin: '15px 0', textAlign: "justify" }}>
-                                {user.about.slice(0, displayedChars)}
-                                {isCompleteDisplay ? (
-                                    <>
-                                        {isShortabout ? null : (
-                                            <Button style={{ backgroundColor: 'transparent', padding:'0px 5px' }} variant="text" onClick={resetDisplay}>See Less</Button>
-                                        )}
-                                    </>
-                                ) : (
-                                    <>
-                                        {user.about.length > displayedChars && (
-                                            <Button style={{ backgroundColor: 'transparent', padding:'0px 5px' }} variant="text" onClick={toggleShowMore}>... Show More</Button>
-                                        )}
-                                    </>
-                                )}
-                            </Typography>
-                        </>)}
-                        {(user.location || user.organization || user.occupation) && (<>
-                            <Divider sx={{ margin: '15px 0' }} />
-                            {user.occupation && <Typography variant="h6" sx={{ margin: '15px 0', display: 'flex', alignItems: 'center' }}><WorkIcon sx={{ mr: "5px" }} /> {user.occupation}</Typography>}
-                            {user.organization && <Typography variant="h6" sx={{ margin: '15px 0', display: 'flex', alignItems: 'center' }}><CorporateFareIcon sx={{ mr: "5px" }} /> {user.organization}</Typography>}
-                            {user.location && <Typography variant="h6" sx={{ margin: '15px 0', display: 'flex', alignItems: 'center' }}><LocationOnIcon sx={{ mr: "5px" }} /> {user.location}</Typography>}
-                        </>)} */}
-                    </WidgetWrapper>
+                    </WidgetWrapper> */}
                     <Box mt="2rem" />
-                    <ConnectionListWidget userId={user._id} />
+                    <ConnectionListWidget userId={isUser?user._id:userId} />
                 </Box>
             </Box>
             <Dialog
