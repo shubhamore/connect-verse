@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import { useSelector,useDispatch } from 'react-redux'
+import React, { useState,useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import Navbar from 'scenes/navbar/Navbar'
 import UserImage from 'components/UserImage'
 import UserWidget from 'scenes/widgets/UserWidget'
-import { DeleteOutlined, EditOutlined } from '@mui/icons-material'
+import { DeleteOutlined, EditOutlined, ShareOutlined, PersonAddOutlined, PersonRemoveOutlined } from '@mui/icons-material'
 import { Box, Divider, Typography, Button, useTheme, IconButton } from '@mui/material'
 import WidgetWrapper from 'components/WidgetWrapper'
 import FlexBetween from 'components/FlexBetween'
@@ -22,17 +22,37 @@ import Dropzone from 'react-dropzone'
 import { setLogin } from 'state'
 import SideWidget from 'scenes/widgets/SideWidget'
 import { useParams } from 'react-router-dom'
+import PostsWidget from 'scenes/widgets/PostsWidget'
+import { toast } from "react-toastify"
+import { setConnection } from 'state'
 
-export default function MyProfile({isUser=false}) {
-    const {userId}=useParams()
+export default function MyProfile({ isUser = false }) {
+    const { userId } = useParams()
     const { palette } = useTheme()
     const dispatch = useDispatch()
     const token = useSelector(state => state.token)
+    const { _id } = useSelector(state => state.user)
     const user = useSelector(state => state.user)
+    const {connections} = useSelector(state => state.user)
     const [displayedChars, setDisplayedChars] = useState(750);
     const increment = 1000;
     const [image, setImage] = useState(user.profilePicture)
     const [imageName, setImageName] = useState("Posted Image")
+    const [isConnection, setIsConnection] = useState(connections.some((connection) => connection._id === _id))
+
+    const patchConnection = async (method) => {
+        console.log("patch connection pressed")
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/${_id}/${userId}`, {
+            method: "PATCH",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+        })
+        const data = await response.json()
+        setIsConnection(!isConnection)
+        dispatch(setConnection({ connections: data }))
+    }
 
     const [newuser, setNewUser] = useState({
         name: user.name,
@@ -55,8 +75,8 @@ export default function MyProfile({isUser=false}) {
         setDisplayedChars(750);
     };
 
-    const isCompleteDisplay = user&& user.about&& displayedChars >= user.about.length; // Check if complete content is displayed
-    const isShortabout = user&& user.about&& user.about.length <= 750; // Check if user.about is short
+    const isCompleteDisplay = user && user.about && displayedChars >= user.about.length; // Check if complete content is displayed
+    const isShortabout = user && user.about && user.about.length <= 750; // Check if user.about is short
 
     const resetForm = () => {
         const originalUser = {
@@ -95,7 +115,7 @@ export default function MyProfile({isUser=false}) {
     }
 
     const editProfile = async () => {
-        const updatedUser = { ...newuser, profilePicture: image,userId:user._id };
+        const updatedUser = { ...newuser, profilePicture: image, userId: user._id };
         console.log("updatedUser=", updatedUser)
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/edit`, {
             method: 'PUT',
@@ -111,13 +131,43 @@ export default function MyProfile({isUser=false}) {
         setOpen(false)
     }
 
+    function copyToClipboard() {
+        navigator.clipboard.writeText(`${process.env.REACT_APP_FRONTEND_URL}/profile/${isUser ? user._id : userId}`)
+        toast.info("Profile link copied to clipboard", { position: 'top-right' })
+    }
+
     return (
         <div>
             <Navbar />
             <Box mt="6.5rem" />
             <Box>
                 <Box sx={{ width: '850px', margin: "0 auto", maxWidth: "90vw" }}>
-                    <SideWidget userId={isUser?user._id:userId} showEditBtn={isUser}/>
+                    <WidgetWrapper sx={{padding:"1rem"}}>
+                        <Box sx={{display:'flex',alignItems:'center'}}>
+                            {!isUser&&_id!==userId&&<IconButton sx={{ backgroundColor: palette.neutral.light,"&:hover":{ color: palette.primary.main} }} onClick={patchConnection}>
+                                {isConnection ? (
+                                    <PersonRemoveOutlined />
+                                ) : (
+                                    <PersonAddOutlined />
+                                )}
+                            </IconButton>}
+                            {/* <Typography style={{ flex: 1 , alignItems:'center'}}></Typography> */}
+                            <IconButton
+                                onClick={copyToClipboard}
+                                sx={{
+                                    backgroundColor: palette.neutral.light,
+                                    "&:hover": {
+                                        color: palette.primary.main
+                                    },
+                                    marginLeft:'auto'
+                                }}
+                            >
+                                <ShareOutlined />
+                            </IconButton>
+                        </Box>
+                    </WidgetWrapper>
+                    <Box mt="2rem" />
+                    <SideWidget userId={isUser ? user._id : userId} showEditBtn={isUser} />
                     {/* <WidgetWrapper style={{ position: 'relative' }}>
                         <Box sx={{ position: 'absolute', right: '1.5rem' }}>
                             <IconButton sx={{ backgroundColor: palette.neutral.light }} onClick={handleClickOpen}>
@@ -156,7 +206,12 @@ export default function MyProfile({isUser=false}) {
                         <Typography variant="h6" sx={{ margin: '15px 0', display: 'flex', alignItems: 'center' }}><LocationOnIcon sx={{ mr: "5px" }} />: {user.location ? user.location : <Typography color={palette.neutral.medium} > N/A</Typography>}</Typography>
                     </WidgetWrapper> */}
                     <Box mt="2rem" />
-                    <ConnectionListWidget userId={isUser?user._id:userId} />
+                    <ConnectionListWidget userId={isUser ? user._id : userId} />
+                    <Box mt="2rem" />
+                    <WidgetWrapper sx={{ backgroundColor: palette.neutral.light }}>
+                        <Typography variant="h2" sx={{ margin: '15px 0', textAlign: "center" }}>Recent Posts</Typography>
+                        <PostsWidget Id={isUser ? user._id : userId} isProfile={true} />
+                    </WidgetWrapper>
                 </Box>
             </Box>
             <Dialog
@@ -177,7 +232,7 @@ export default function MyProfile({isUser=false}) {
                         <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
                             Edit Profile
                         </Typography>
-                        <Button autoFocus disabled={newuser.name.trim().length===0} color="inherit" onClick={editProfile}>
+                        <Button autoFocus disabled={newuser.name.trim().length === 0} color="inherit" onClick={editProfile}>
                             save
                         </Button>
                     </Toolbar>
