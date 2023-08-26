@@ -45,7 +45,7 @@ export default function MyPostWidget({ profilePicture, name }) {
     const handlePost = async () => {
         const formData = new FormData()
         formData.append("userId", _id)
-        formData.append("desc", post)
+        formData.append("desc", post.trim())
         if (image) {
             formData.append("postImg", image)
         }
@@ -152,7 +152,7 @@ export default function MyPostWidget({ profilePicture, name }) {
                     <Typography color={mediumMain}>{!isImage ? "Add" : "Remove"} Image</Typography>
                 </FlexBetween>
                 <Button
-                    disabled={!post || post.length>4000}
+                    disabled={!post || post.length>4000||post.trim().length===0}
                     onClick={handlePost}
                     sx={{
                         backgroundColor: palette.primary.main,

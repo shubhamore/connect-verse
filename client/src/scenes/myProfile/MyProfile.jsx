@@ -130,7 +130,7 @@ export default function MyProfile() {
                             </Box>
                         </Box>
                         <Divider sx={{ margin: '15px 0' }} />
-                        {user.about ? <Typography variant="h6" sx={{ margin: '15px 0', textAlign: "justify" }}>
+                        {user.about ? <Typography variant="h6" sx={{ margin: '15px 0', textAlign: "justify",whiteSpace:"pre-line" }}>
                             {user.about.slice(0, displayedChars)}
                             {isCompleteDisplay ? (
                                 <>
@@ -198,7 +198,7 @@ export default function MyProfile() {
                         <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
                             Edit Profile
                         </Typography>
-                        <Button autoFocus color="inherit" onClick={editProfile}>
+                        <Button autoFocus disabled={newuser.name.trim().length===0} color="inherit" onClick={editProfile}>
                             save
                         </Button>
                     </Toolbar>

@@ -133,7 +133,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ postId, desc: description, postImg: image })
+            body: JSON.stringify({ postId, desc: description.trim(), postImg: image })
         })
         const data = await response.json()
         handleClose()
@@ -149,7 +149,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ postId, userId: loggedInUserId, comment })
+            body: JSON.stringify({ postId, userId: loggedInUserId, comment:comment.trim() })
         })
         const data = await response.json()
         dispatch(setPost({ post: data }))
@@ -218,7 +218,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                     time={time}
                 />
                 <Typography color={main} sx={{ mt: "1rem" }}>
-                    <Typography color={main} sx={{ mt: "1rem" }}>
+                    <Typography color={main} sx={{ mt: "1rem",whiteSpace:"pre-line" }}>
                         {desc.slice(0, displayedChars)}
                         {isCompleteDisplay ? (
                             <>
@@ -341,7 +341,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                                 value={comment}
                                 sx={{ width: "100%" }}
                             />
-                            <IconButton onClick={postComment} disabled={!comment || comment.length > 2500}>
+                            <IconButton onClick={postComment} disabled={!comment || comment.length > 2500 || comment.trim().length===0}>
                                 <SendIcon sx={{ color: "primary" }} />
                             </IconButton>
                         </div>
@@ -469,7 +469,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog2}>Cancel</Button>
-                    <Button onClick={editPost} disabled={description.length>4000||(image===postImg&&desc===description)} autoFocus>
+                    <Button onClick={editPost} disabled={description.length>4000||(image===postImg&&desc===description)||description.trim().length===0} autoFocus>
                         Save
                     </Button>
                 </DialogActions>

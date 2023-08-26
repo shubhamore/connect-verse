@@ -101,7 +101,7 @@ export default function Comment({ comment, userData, postId }) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                comment: newComment,
+                comment: newComment.trim(),
                 commentId: comment._id,
                 postId: postId
             })
@@ -177,7 +177,7 @@ export default function Comment({ comment, userData, postId }) {
                             </Menu>
                         </div>}
                     </FlexBetween>
-                    <Typography>{comment.comment.slice(0, displayedChars)}
+                    <Typography sx={{whiteSpace:"pre-line"}}>{comment.comment.slice(0, displayedChars)}
                         {isCompleteDisplay ? (
                             <>
                                 {isShortComment ? null : (
@@ -242,7 +242,7 @@ export default function Comment({ comment, userData, postId }) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog2}>Cancel</Button>
-                    <Button onClick={editComment} disabled={newComment.length>2500 || newComment===comment.comment} autoFocus>
+                    <Button onClick={editComment} disabled={newComment.length>2500 || newComment===comment.comment || newComment.trim().length===0} autoFocus>
                         Save
                     </Button>
                 </DialogActions>
