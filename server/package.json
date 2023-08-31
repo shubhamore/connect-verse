@@ -20,5 +20,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "shubhamore",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": "16.18.0"
+  }
 }
