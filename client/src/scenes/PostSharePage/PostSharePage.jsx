@@ -23,7 +23,7 @@ export default function PostSharePage() {
             headers: { Authorization: `Bearer ${token}` }
         })
         const data = await response.json()
-        console.log("getPost=", data)
+        //console.log("getPost=", data)
         setPosts(data)
         setLoading(false)
     }

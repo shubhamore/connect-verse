@@ -80,7 +80,7 @@ export default function SideWidget({ userId, showAbout = true, showEditBtn = fal
         // resetForm()
     }, [userId])
     useEffect(() => {
-        console.log("user=", user)
+        //console.log("user=", user)
     }, [user])
 
     if (!user) return null;
@@ -116,7 +116,7 @@ export default function SideWidget({ userId, showAbout = true, showEditBtn = fal
 
     const editProfile = async () => {
         const updatedUser = { ...newuser, profilePicture: image,userId:user._id };
-        console.log("updatedUser=", updatedUser)
+        //console.log("updatedUser=", updatedUser)
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/edit`, {
             method: 'PUT',
             headers: {
@@ -126,7 +126,7 @@ export default function SideWidget({ userId, showAbout = true, showEditBtn = fal
             body: JSON.stringify(updatedUser)
         })
         const data = await response.json()
-        console.log("data=", data)
+        //console.log("data=", data)
         setUser(data)
         dispatch(setLogin({ user: data, token }))
         setOpen(false)

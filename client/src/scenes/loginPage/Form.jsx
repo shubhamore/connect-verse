@@ -74,12 +74,12 @@ export default function Form() {
             onSubmitProps.resetForm()
         }
         else if (savedUserResponse.status === 409) {
-            console.log("user already exists")
+            //console.log("user already exists")
             toast.error("User already exists with the entered email")
         }
         else {
             toast.error("Oops! Something went wrong")
-            console.log(savedUserResponse)
+            //console.log(savedUserResponse)
         }
     }
 
@@ -107,7 +107,7 @@ export default function Form() {
             toast.error("Invalid Credentials")
         }
         else {
-            console.log("error occurred while loggin in")
+            //console.log("error occurred while loggin in")
             console.log(loggedInResponse)
         }
     }

@@ -192,7 +192,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
 
                     if (response.ok) {
                         const userDataForComment = await response.json();
-                        console.log("userDataForComment=", userDataForComment)
+                        //console.log("userDataForComment=", userDataForComment)
                         setUserData(prevData => ({
                             ...prevData,
                             [comment._id]: userDataForComment,

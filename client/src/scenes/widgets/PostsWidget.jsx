@@ -15,7 +15,7 @@ export default function PostsWidget({ Id, isProfile=false}) {
             headers: { Authorization: `Bearer ${token}` }
         })
         const data = await response.json()
-        console.log("getPosts=",data)
+        //console.log("getPosts=",data)
         dispatch(setPosts({ posts: data }))
     }
 
@@ -25,7 +25,7 @@ export default function PostsWidget({ Id, isProfile=false}) {
             headers: { Authorization: `Bearer ${token}` }
         })
         const data = await response.json()
-        console.log("getUserPosts=",data)
+        //console.log("getUserPosts=",data)
         dispatch(setPosts({ posts: data }))
     }
 

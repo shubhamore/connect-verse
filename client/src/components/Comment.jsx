@@ -89,7 +89,7 @@ export default function Comment({ comment, userData, postId }) {
             })
         })
         const data = await response.json()
-        console.log(data)
+        //console.log(data)
         dispatch(setPost({ post: data }))
     }
 
@@ -107,7 +107,7 @@ export default function Comment({ comment, userData, postId }) {
             })
         })
         const data = await response.json()
-        console.log(data)
+        //console.log(data)
         handleClose()
         setOpenDialog2(false)
         dispatch(setPost({ post: data }))

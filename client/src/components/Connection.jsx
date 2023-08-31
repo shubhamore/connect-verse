@@ -25,7 +25,7 @@ export default function Connection({connectionId,name,showConnect=false,time=nul
     const isConnection=connections.find(connection=>connection._id===connectionId)
     
     const patchConnection = async (method) => {
-        console.log("patch connection pressed")
+        //console.log("patch connection pressed")
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/${_id}/${connectionId}`, {
             method:"PATCH",
             headers: { 

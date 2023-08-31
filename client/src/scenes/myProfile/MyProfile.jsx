@@ -41,7 +41,7 @@ export default function MyProfile({ isUser = false }) {
     const [isConnection, setIsConnection] = useState(connections.some((connection) => connection._id === _id))
 
     const patchConnection = async (method) => {
-        console.log("patch connection pressed")
+        //console.log("patch connection pressed")
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/${_id}/${userId}`, {
             method: "PATCH",
             headers: {
@@ -116,7 +116,7 @@ export default function MyProfile({ isUser = false }) {
 
     const editProfile = async () => {
         const updatedUser = { ...newuser, profilePicture: image, userId: user._id };
-        console.log("updatedUser=", updatedUser)
+        //console.log("updatedUser=", updatedUser)
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/edit`, {
             method: 'PUT',
             headers: {
@@ -126,7 +126,7 @@ export default function MyProfile({ isUser = false }) {
             body: JSON.stringify(updatedUser)
         })
         const data = await response.json()
-        console.log("data=", data)
+        //console.log("data=", data)
         dispatch(setLogin({ user: data, token }))
         setOpen(false)
     }

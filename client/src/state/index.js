@@ -38,7 +38,7 @@ export const authSlice = createSlice({
             } else {
                 console.error("no friends :(")
             }
-            console.log("connections in state=", state.user.connections)
+            //console.log("connections in state=", state.user.connections)
         },
         setPosts: (state, action) => {
             if(action.payload.posts.length===1){
