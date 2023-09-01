@@ -26,7 +26,7 @@ function App() {
             <Route path="/" element={<LoginPage />} />
             <Route path="/home" element={isAuth?<HomePage />:<Navigate to="/"/>} />
             <Route path="/profile/:userId" element={isAuth?<MyProfile />:<Navigate to="/"/>} />
-            // <Route path="/post/:postId" element={isAuth?<PostSharePage />:<Navigate to="/"/>} />
+            /* <Route path="/post/:postId" element={isAuth?<PostSharePage />:<Navigate to="/"/>} />*/
             <Route path="/myProfile" element={isAuth?<MyProfile isUser={true} />:<Navigate to="/"/>} />
             <Route path="*" element={<Navigate to="/"/>} />
           </Routes>
