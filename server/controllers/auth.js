@@ -15,7 +15,7 @@ export const register = async (req, res) => {
             name: req.body.name,
             email: req.body.email,
             profilePicture: req.body.profilePicture,
-            location: req.body.location,
+            // location: req.body.location,
             password: hashedPassword,
         });
 

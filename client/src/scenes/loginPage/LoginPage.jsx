@@ -18,13 +18,15 @@ export default function LoginPage() {
 
     if(data){
       const token=JSON.parse(JSON.parse(data).token)
-      const response=await fetch(`${process.env.REACT_APP_BASE_URL}/auth/verify`,{
-        method:"GET",
-        headers:{Authorization:`Bearer ${token}`}
-      })
-      const result=await response.json()
-      if(response.ok) navigate("/home")
-      else dispatch(setLogout())
+      if(token){
+        const response=await fetch(`${process.env.REACT_APP_BASE_URL}/auth/verify`,{
+          method:"GET",
+          headers:{Authorization:`Bearer ${token}`}
+        })
+        // const result=await response.json()
+        if(response.ok) navigate("/home")
+        else dispatch(setLogout())
+      }   
     }
   }
 
