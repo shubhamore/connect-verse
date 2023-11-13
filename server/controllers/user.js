@@ -53,24 +53,28 @@ export const addRemoveConnection = async (req, res) => {
 export const editUser = async (req, res) => {
     try{
         const {userId,name,about,location,occupation,organization,profilePicture} = req.body
-        console.log("req.body",req.body)
         const user =await User.findById(userId)
-        let oldId=user.pictureId
-        if(oldId!==""){
-            await cloudinary.uploader.destroy(oldId)
-            user.pictureId=""
+        if(user.profilePicture!==profilePicture){
+            if(user.pictureId!==""){
+                console.log("destroying from cloudinary and setting pictureId to empty")
+                await cloudinary.uploader.destroy(user.pictureId)
+                user.pictureId=""
+            }
+            let uploadedResponse = await cloudinary.uploader.upload(profilePicture, {
+                folder: "connect-verse",
+            })
+            if(uploadedResponse){
+                user.profilePicture = uploadedResponse.secure_url,
+                user.pictureId = uploadedResponse.public_id
+            }
         }
-        let uploadedResponse = await cloudinary.uploader.upload(profilePicture, {
-            folder: "connect-verse",
-        })
         user.name = name
         user.about = about
         user.location = location
         user.occupation = occupation
         user.organization = organization
-        user.profilePicture = uploadedResponse.secure_url,
-        user.pictureId = uploadedResponse.public_id
         await user.save()
+        console.log("new user=",user)
         res.status(200).json(user)
 
     } catch (error){
