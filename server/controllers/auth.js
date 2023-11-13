@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import cloudinary from "../config/cloudinary.js";
 
 // Register
 export const register = async (req, res) => {
@@ -11,10 +12,21 @@ export const register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
+        let photo=req.body.profilePicture
+        let id
+        if(photo){
+            const uploadedResponse = await cloudinary.uploader.upload(photo, {
+                folder: "connect-verse"
+            })
+            photo = uploadedResponse.secure_url
+            id = uploadedResponse.public_id
+        }
+
         const newUser = new User({
             name: req.body.name,
             email: req.body.email,
-            profilePicture: req.body.profilePicture,
+            profilePicture: photo,
+            pictureId: photo ? id : "",
             // location: req.body.location,
             password: hashedPassword,
         });
