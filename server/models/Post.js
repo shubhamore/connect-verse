@@ -9,6 +9,7 @@ const postSchema = new mongoose.Schema(
         name: String,
         desc: String,
         postImg: String,
+        postImgId: String,
         likes: {
             type: Map,
             of: Boolean

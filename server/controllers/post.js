@@ -1,16 +1,25 @@
 import Post from "../models/Post.js";
 import User from "../models/User.js";
+import cloudinary from "../config/cloudinary.js";
 
 export const createPost = async (req, res) => {
     try {
         const { userId, desc, postImg } = req.body;
         if (desc.length > 4000) return res.status(422).json("desc can't be more than 4000 characters")
         const user = await User.findById(userId);
+        let uploadedResponse = null;
+        if(postImg){
+            uploadedResponse = await cloudinary.uploader.upload(postImg, {
+                folder: "connect-verse"
+            })
+        }
+
         const newPost = new Post({
             userId,
             name: user.name,
             desc,
-            postImg,
+            postImg: uploadedResponse ? uploadedResponse.secure_url : "",
+            postImgId: uploadedResponse ? uploadedResponse.public_id : "",
             likes: new Map(),
         })
         await newPost.save();
@@ -68,7 +77,12 @@ export const likePost = async (req, res) => {
 export const deletePost = async (req, res) => {
     try {
         const { postId } = req.body
-        await Post.findByIdAndDelete(postId)
+        // await Post.findByIdAndDelete(postId)
+        const post = await Post.findById(postId)
+        if(post.postImgId){
+            await cloudinary.uploader.destroy(post.postImgId)
+        }
+        await post.deleteOne()
         const posts = await Post.find()
         res.status(200).json(posts)
     } catch (error) {
@@ -83,13 +97,29 @@ export const editPost = async (req, res) => {
         if (desc.length > 4000) return res.status(422).json("desc can't be more than 4000 characters")
         const post = await Post.findById(postId)
         post.desc = desc
-        post.postImg = postImg
-        const updatedPost = await Post.findByIdAndUpdate(
-            postId,
-            { desc: post.desc, postImg: post.postImg, isEdited: true },
-            { new: true }
-        )
-        res.status(200).json(updatedPost)
+        // post.postImg = postImg
+        if(post.postImg!==postImg){
+            if(post.postImgId){
+                await cloudinary.uploader.destroy(post.postImgId)
+            }
+            let uploadedResponse = null;
+            if(postImg){
+                uploadedResponse = await cloudinary.uploader.upload(postImg, {
+                    folder: "connect-verse"
+                })
+            }
+            post.postImg = uploadedResponse ? uploadedResponse.secure_url : ""
+            post.postImgId = uploadedResponse ? uploadedResponse.public_id : ""
+        }
+        post.isEdited = true
+        await post.save()
+        res.status(200).json(post)
+        // const updatedPost = await Post.findByIdAndUpdate(
+        //     postId,
+        //     { desc: post.desc, postImg: post.postImg, isEdited: true },
+        //     { new: true }
+        // )
+        // res.status(200).json(updatedPost)
     } catch (error) {
         console.log("error in editPost", error)
         res.status(404).json(error)
