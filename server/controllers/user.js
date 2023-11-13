@@ -53,11 +53,12 @@ export const addRemoveConnection = async (req, res) => {
 export const editUser = async (req, res) => {
     try{
         const {userId,name,about,location,occupation,organization,profilePicture} = req.body
-        // console.log("req.body",req.body)
+        console.log("req.body",req.body)
         const user =await User.findById(userId)
         let oldId=user.pictureId
         if(oldId!==""){
             await cloudinary.uploader.destroy(oldId)
+            user.pictureId=""
         }
         let uploadedResponse = await cloudinary.uploader.upload(profilePicture, {
             folder: "connect-verse",
