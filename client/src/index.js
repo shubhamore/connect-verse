@@ -17,6 +17,7 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { PersistGate } from "redux-persist/integration/react";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const persistConfig = { key: "root", storage, version: 1 };
 const persistedReducer = persistReducer(persistConfig, authReducer);
@@ -34,7 +35,9 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistStore(store)}>
+    <GoogleOAuthProvider clientId="838075656138-pgbiv33gt9pbknva262q01oteg4iq1ge.apps.googleusercontent.com">
       <App />
+    </GoogleOAuthProvider>
     </PersistGate>
   </Provider>
 );

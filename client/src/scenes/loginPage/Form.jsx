@@ -9,6 +9,8 @@ import { setLogin } from 'state'
 import Dropzone from 'react-dropzone'
 import FlexBetween from 'components/FlexBetween'
 import { toast } from "react-toastify"
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 
 const registerSchema = yup.object().shape({
     email: yup.string().email("Invalid email").required("This Field is required"),
@@ -115,6 +117,37 @@ export default function Form() {
     const handleFormSubmit = async (values, onSubmitProps) => {
         if (isLogin) await login(values, onSubmitProps)
         else await register(values, onSubmitProps)
+    }
+
+    const oauthSuccess = async (credentialResponse) => {
+        var decodedToken = jwtDecode(credentialResponse.credential);
+        const email = decodedToken.email
+        const loggedInResponse = await fetch(
+            `${process.env.REACT_APP_BASE_URL}/auth/oauth-login`,
+            {
+                method: "POST",
+                body: JSON.stringify({ "email": email }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        )
+        const loggedIn = await loggedInResponse.json()
+        if (loggedInResponse.status === 200) {
+            dispatch(setLogin({
+                user: loggedIn.user,
+                token: loggedIn.accessToken
+            }))
+            navigate("/home")
+        }
+        else if (loggedInResponse.status === 404) {
+            toast.error("Please create an account first")
+            setPageType("register")
+        }
+        else {
+            //console.log("error occurred while loggin in")
+            console.log(loggedInResponse)
+        }
     }
 
     return (
@@ -304,6 +337,28 @@ export default function Form() {
                                 {isLogin ? "Don't have an account? Sign Up here." : "Already have an account? Login here."}
                             </Typography>
                         </Box>
+                        {isLogin && (
+                            <>
+                                <Typography
+                                    variant="h3"
+                                    sx={{
+                                        marginBottom: "1rem",
+                                    }}
+                                >
+                                    OR
+                                </Typography>
+                                <GoogleLogin
+                                    onSuccess={credentialResponse => {
+                                        oauthSuccess(credentialResponse);
+                                    }}
+                                    onError={() => {
+                                        console.log('Login Failed');
+                                        toast.error("Oops! Something went wrong")
+                                    }}
+                                    useOneTap
+                                />
+                            </>
+                        )}
                     </Box>
                 </form>
             )}

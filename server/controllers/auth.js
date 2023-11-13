@@ -46,6 +46,20 @@ export const login = async (req, res) => {
     }
 }
 
+// OAuth Login
+export const oauthLogin= async(req,res)=>{
+    try{
+        const {email}=req.body
+        const user= await User.findOne({email:email})
+        if(!user) return res.status(404).json("user not found")
+        const accessToken= jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"5d"})
+        res.status(200).json({user,accessToken})
+    } catch(err){
+        console.log("auth.js oauthLogin error",err)
+        res.status(500).json(err);
+    }
+}
+
 // Verify
 export const verifyToken = async (req, res) => {
     try {
