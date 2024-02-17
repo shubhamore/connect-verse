@@ -216,7 +216,7 @@ export default function SideWidget({ userId, showAbout = true, showEditBtn = fal
                     >
                         <FlexBetween>
                             <Dropzone
-                                acceptedFiles=".jpg,.jpeg,.png"
+                                accept= {{"image/*":[".jpg",".jpeg",".png"]}}
                                 multiple={false}
                                 onDrop={async (acceptedFiles) => {
                                     setImageName(acceptedFiles[0].name)

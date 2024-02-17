@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Button, TextField, Typography, useTheme } from "@mui/material"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 import { Formik } from 'formik'
@@ -45,6 +45,7 @@ export default function Form() {
     const { palette } = useTheme()
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const [loading, setLoading] = useState(false)
 
     function convertToBase64(file) {
         return new Promise((resolve, reject) => {
@@ -60,6 +61,7 @@ export default function Form() {
     }
 
     const register = async (formData, onSubmitProps) => {
+        setLoading(true)
         const savedUserResponse = await fetch(`${process.env.REACT_APP_BASE_URL}/auth/register`,
             {
                 method: "POST",
@@ -83,9 +85,11 @@ export default function Form() {
             toast.error("Oops! Something went wrong")
             //console.log(savedUserResponse)
         }
+        setLoading(false)
     }
 
     const login = async (formData, onSubmitProps) => {
+        setLoading(true)
         const loggedInResponse = await fetch(
             `${process.env.REACT_APP_BASE_URL}/auth/login`,
             {
@@ -112,6 +116,7 @@ export default function Form() {
             //console.log("error occurred while loggin in")
             console.log(loggedInResponse)
         }
+        setLoading(false)
     }
 
     const handleFormSubmit = async (values, onSubmitProps) => {
@@ -149,6 +154,10 @@ export default function Form() {
             console.log(loggedInResponse)
         }
     }
+
+    useEffect(()=>{
+        console.log("loading",loading)
+    },[loading])
 
     return (
         <Formik
@@ -241,7 +250,7 @@ export default function Form() {
                                     sx={{ width: "100%" }}
                                 >
                                     <Dropzone
-                                        acceptedFiles=".jpg,.jpeg,.png"
+                                        accept= {{"image/*":[".jpg",".jpeg",".png"]}}
                                         multiple={false}
                                         onDrop={async (acceptedFiles) => {
                                             setProfilePictureName(acceptedFiles[0].name)
@@ -251,7 +260,7 @@ export default function Form() {
                                             )
                                         }}
                                     >
-                                        {({ getRootProps, getInputProps }) => (
+                                        {({ getRootProps, getInputProps,acceptedFiles,fileRejections }) => (
                                             <Box
                                                 {...getRootProps()}
                                                 border={`2px dashed ${palette.primary.main}`}
@@ -347,7 +356,7 @@ export default function Form() {
                                 >
                                     OR
                                 </Typography>
-                                <GoogleLogin
+                                <GoogleLogin                                
                                     onSuccess={credentialResponse => {
                                         oauthSuccess(credentialResponse);
                                     }}

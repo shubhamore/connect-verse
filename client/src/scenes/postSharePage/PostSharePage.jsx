@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom'
 import PostWidget from 'scenes/widgets/PostWidget'
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import Loading from 'components/Loading'
 
 export default function PostSharePage() {
     const { postId } = useParams()
@@ -69,12 +70,7 @@ export default function PostSharePage() {
                     </Box>
                 )}
             </Box> : (
-                <Backdrop
-                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                    open={loading}
-                >
-                    <CircularProgress color="inherit" />
-                </Backdrop>
+                <Loading loading={loading}/>
             )}
         </div>
     )

@@ -246,7 +246,7 @@ export default function MyProfile({ isUser = false }) {
                     >
                         <FlexBetween>
                             <Dropzone
-                                acceptedFiles=".jpg,.jpeg,.png"
+                                accept= {{"image/*":[".jpg",".jpeg",".png"]}}
                                 multiple={false}
                                 onDrop={async (acceptedFiles) => {
                                     setImageName(acceptedFiles[0].name)

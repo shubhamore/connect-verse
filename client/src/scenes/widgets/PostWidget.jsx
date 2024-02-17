@@ -20,6 +20,7 @@ import Dropzone from 'react-dropzone'
 import TextField from '@mui/material/TextField';
 import moment from 'moment/moment';
 import Comment from 'components/Comment';
+import Loading from 'components/Loading';
 
 export default function PostWidget({ postId, userId, name, desc, postImg, likes, comments, isEdited, isProfile, createdAt }) {
     const [userData, setUserData] = useState({});
@@ -34,6 +35,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
     const primary = palette.primary.main
     const [comment, setComment] = useState("")
     const time = moment(createdAt).fromNow()
+    const [loading, setLoading] = useState(false)
     const [loading1, setLoading1] = useState(true)
     const [loading2, setLoading2] = useState(true)
     const [displayedChars, setDisplayedChars] = useState(500); // Initial number of characters to display
@@ -113,6 +115,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
     }
 
     const deletePost = async () => {
+        setLoading(true)
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/post/delete`, {
             method: "POST",
             headers: {
@@ -126,9 +129,11 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
         handleCloseDialog()
         dispatch(setPosts({ posts: data }))
         toast.success("Post deleted successfully")
+        setLoading(false)
     }
 
     const editPost = async () => {
+        setLoading(true)
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/post/edit`, {
             method: "PUT",
             headers: {
@@ -142,9 +147,11 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
         setOpenDialog2(false)
         dispatch(setPost({ post: data }))
         toast.success("Post edited successfully")
+        setLoading(false)
     }
 
     const postComment = async () => {
+        setLoading(true)
         const response = await fetch(`${process.env.REACT_APP_BASE_URL}/post/comment`, {
             method: "POST",
             headers: {
@@ -156,6 +163,7 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
         const data = await response.json()
         dispatch(setPost({ post: data }))
         setComment("")
+        setLoading(false)
     }
 
     function convertToBase64(file) {
@@ -225,272 +233,274 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
 
     return (
         <>
-            <WidgetWrapper mb="2rem">
-                <Connection
-                    connectionId={userId}
-                    name={name}
-                    showConnect={!isProfile}
-                    time={time}
-                    profilePicture={profileImg}
-                />
-                <Typography color={main} sx={{ mt: "1rem" }}>
-                    <Typography color={main} sx={{ mt: "1rem", whiteSpace: "pre-line" }}>
-                        {desc.slice(0, displayedChars)}
-                        {isCompleteDisplay ? (
-                            <>
-                                {isShortDesc ? null : (
-                                    <Button style={{ backgroundColor: 'transparent', padding: '0px 5px' }} variant="text" onClick={resetDisplay}>See Less</Button>
-                                )}
-                            </>
-                        ) : (
-                            <>
-                                {desc.length > displayedChars && (
-                                    <Button style={{ backgroundColor: 'transparent', padding: '0px 5px' }} variant="raised" onClick={toggleShowMore}>... Show More</Button>
-                                )}
-                            </>
-                        )}
-                    </Typography>
-                </Typography>
-                {postImg && (
-                    <img
-                        width="100%"
-                        height="auto"
-                        max-height="50px"
-                        alt="post"
-                        style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-                        src={postImg}
+            {!loading?<>
+                <WidgetWrapper mb="2rem">
+                    <Connection
+                        connectionId={userId}
+                        name={name}
+                        showConnect={!isProfile}
+                        time={time}
+                        profilePicture={profileImg}
                     />
-                )}
-                {isEdited && (
-                    <Typography color={palette.neutral.medium} sx={{ mt: "0.5rem", display: "flex", alignItems: "center" }}><EditOutlined sx={{ fontSize: "17px", mr: "3.5px" }} />Edited</Typography>
-                )}
-                <FlexBetween sx={{ mt: "0.25rem" }}>
-                    <FlexBetween gap="1rem">
-                        <FlexBetween gap="0.3rem">
-                            <IconButton
-                                onClick={patchLike}
-                                sx={{
-                                    "&:hover": {
-                                        color: primary
-                                    }
-                                }}
-                            >
-                                {isLiked ? (
-                                    <FavoriteOutlined sx={{ color: primary }} />
-                                ) : (
-                                    <FavoriteBorderOutlined />
-                                )}
-                            </IconButton>
-                            <Typography color={main}>
-                                {likeCount}
-                            </Typography>
-                        </FlexBetween>
-
-                        <FlexBetween gap="0.3rem">
-                            <IconButton
-                                onClick={() => setIsComments(!isComments)}
-                                sx={{
-                                    "&:hover": {
-                                        color: primary
-                                    }
-                                }}
-                            >
-                                <ChatBubbleOutlineOutlined />
-                            </IconButton>
-                            <Typography color={main}>
-                                {comments.length}
-                            </Typography>
-                        </FlexBetween>
-                    </FlexBetween>
-
-                    <FlexBetween gap="0.3rem">
-                        <IconButton
-                            onClick={copyToClipboard}
-                            sx={{
-                                "&:hover": {
-                                    color: primary
-                                }
-                            }}
-                        >
-                            <ShareOutlined />
-                        </IconButton>
-                        {loggedInUserId === userId && <div>
-                            <IconButton
-                                onClick={handleClick}
-                                sx={{
-                                    "&:hover": {
-                                        color: primary
-                                    }
-                                }}
-                            >
-                                <MoreVertIcon />
-                            </IconButton>
-                            <Menu
-                                anchorEl={anchorEl}
-                                open={open}
-                                onClose={handleClose}
-                            >
-                                <MenuItem onClick={handleClickOpenDialog2}><EditIcon sx={{ fontSize: '17.5px', marginRight: '10px' }} />Edit post</MenuItem>
-                                <MenuItem onClick={handleClickOpenDialog}><DeleteIcon sx={{ fontSize: '17.5px', marginRight: '10px' }} />Delete post</MenuItem>
-                            </Menu>
-                        </div>}
-                    </FlexBetween>
-                </FlexBetween>
-
-                {isComments && (
-                    <Box mt="0.5rem">
-                        <div style={{
-                            position: 'relative',
-                            width: "100%",
-                            backgroundColor: palette.neutral.light,
-                            borderRadius: ".25rem",
-                            padding: '.5rem 1rem',
-                            margin: "1rem 0rem",
-                            display: "flex",
-                            alignItems: "flex-end",
-                            justifyContent: 'space-between'
-                        }}>
-                            <InputBase
-                                placeholder="Share your thoughts..."
-                                multiline
-                                onChange={e => setComment(e.target.value)}
-                                value={comment}
-                                sx={{ width: "100%" }}
-                            />
-                            <IconButton onClick={postComment} disabled={!comment || comment.length > 2500 || comment.trim().length === 0}>
-                                <SendIcon sx={{ color: "primary" }} />
-                            </IconButton>
-                        </div>
-                        {comment.length > 2500 && <Typography color="error.main">Comment can't be more than 2500 characters</Typography>}
-                        <Divider />
-
-                        {!loading1 &&!loading2&& comments.map((comment, index) => (
-                            userData[comment._id] && <Comment key={`${comment._id}`} comment={comment} userData={userData[comment._id]} postId={postId} />
-                        ))}
-                        <Divider />
-                        {comments.length === 0 && (
-                            <>
-                                <Typography color={main} sx={{ m: "0.5rem" }}>
-                                    No comments yet
+                    <Typography color={main} sx={{ mt: "1rem" }}>
+                        <Typography color={main} sx={{ mt: "1rem", whiteSpace: "pre-line" }}>
+                            {desc.slice(0, displayedChars)}
+                            {isCompleteDisplay ? (
+                                <>
+                                    {isShortDesc ? null : (
+                                        <Button style={{ backgroundColor: 'transparent', padding: '0px 5px' }} variant="text" onClick={resetDisplay}>See Less</Button>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    {desc.length > displayedChars && (
+                                        <Button style={{ backgroundColor: 'transparent', padding: '0px 5px' }} variant="raised" onClick={toggleShowMore}>... Show More</Button>
+                                    )}
+                                </>
+                            )}
+                        </Typography>
+                    </Typography>
+                    {postImg && (
+                        <img
+                            width="100%"
+                            height="auto"
+                            max-height="50px"
+                            alt="post"
+                            style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
+                            src={postImg}
+                        />
+                    )}
+                    {isEdited && (
+                        <Typography color={palette.neutral.medium} sx={{ mt: "0.5rem", display: "flex", alignItems: "center" }}><EditOutlined sx={{ fontSize: "17px", mr: "3.5px" }} />Edited</Typography>
+                    )}
+                    <FlexBetween sx={{ mt: "0.25rem" }}>
+                        <FlexBetween gap="1rem">
+                            <FlexBetween gap="0.3rem">
+                                <IconButton
+                                    onClick={patchLike}
+                                    sx={{
+                                        "&:hover": {
+                                            color: primary
+                                        }
+                                    }}
+                                >
+                                    {isLiked ? (
+                                        <FavoriteOutlined sx={{ color: primary }} />
+                                    ) : (
+                                        <FavoriteBorderOutlined />
+                                    )}
+                                </IconButton>
+                                <Typography color={main}>
+                                    {likeCount}
                                 </Typography>
-                            </>
-                        )}
-                    </Box>
-                )}
-            </WidgetWrapper>
+                            </FlexBetween>
 
-            {/* Delete post Dialog */}
-            <Dialog
-                open={openDialog}
-                onClose={handleCloseDialog}
-            >
-                <DialogTitle>
-                    Are you sure you want to delete this post?
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        This action cannot be undone.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog}>Cancel</Button>
-                    <Button onClick={deletePost} autoFocus>
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                            <FlexBetween gap="0.3rem">
+                                <IconButton
+                                    onClick={() => setIsComments(!isComments)}
+                                    sx={{
+                                        "&:hover": {
+                                            color: primary
+                                        }
+                                    }}
+                                >
+                                    <ChatBubbleOutlineOutlined />
+                                </IconButton>
+                                <Typography color={main}>
+                                    {comments.length}
+                                </Typography>
+                            </FlexBetween>
+                        </FlexBetween>
 
-            {/* Edit post Dialog */}
-            <Dialog
-                open={openDialog2}
-                onClose={handleCloseDialog2}
-                fullWidth
-            >
-                <DialogTitle>
-                    Edit Post
-                </DialogTitle>
-                <DialogContent>
-                    <Box gap="1.5rem">
-                        <TextField
-                            multiline
-                            onChange={e => setDescription(e.target.value)}
-                            value={description}
-                            label="Description"
-                            sx={{
+                        <FlexBetween gap="0.3rem">
+                            <IconButton
+                                onClick={copyToClipboard}
+                                sx={{
+                                    "&:hover": {
+                                        color: primary
+                                    }
+                                }}
+                            >
+                                <ShareOutlined />
+                            </IconButton>
+                            {loggedInUserId === userId && <div>
+                                <IconButton
+                                    onClick={handleClick}
+                                    sx={{
+                                        "&:hover": {
+                                            color: primary
+                                        }
+                                    }}
+                                >
+                                    <MoreVertIcon />
+                                </IconButton>
+                                <Menu
+                                    anchorEl={anchorEl}
+                                    open={open}
+                                    onClose={handleClose}
+                                >
+                                    <MenuItem onClick={handleClickOpenDialog2}><EditIcon sx={{ fontSize: '17.5px', marginRight: '10px' }} />Edit post</MenuItem>
+                                    <MenuItem onClick={handleClickOpenDialog}><DeleteIcon sx={{ fontSize: '17.5px', marginRight: '10px' }} />Delete post</MenuItem>
+                                </Menu>
+                            </div>}
+                        </FlexBetween>
+                    </FlexBetween>
+
+                    {isComments && (
+                        <Box mt="0.5rem">
+                            <div style={{
+                                position: 'relative',
                                 width: "100%",
                                 backgroundColor: palette.neutral.light,
-                                marginTop: "1rem",
-                            }}
-                        />
-                    </Box>
-                    {description.length > 4000 && <Typography color="error.main">Post can't be more than 4000 characters</Typography>}
-                    {isImage && <Box
-                        border={`1px solid ${palette.neutral.medium}`}
-                        borderRadius="5px"
-                        mt='1rem'
-                        p="1rem"
-                    >
-                        <FlexBetween>
-                            <Dropzone
-                                acceptedFiles=".jpg,.jpeg,.png"
-                                multiple={false}
-                                onDrop={async (acceptedFiles) => {
-                                    setImageName(acceptedFiles[0].name)
-                                    setImage(await convertToBase64(acceptedFiles[0]))
-                                }}
-                            >
-                                {({ getRootProps, getInputProps }) => (
-                                    <Box
-                                        {...getRootProps()}
-                                        border={`2px dashed ${palette.primary.main}`}
-                                        p="1rem"
-                                        width="100%"
-                                        sx={{
-                                            "&:hover": {
-                                                cursor: "pointer"
-                                            },
-                                        }}
-                                    >
-                                        <input {...getInputProps()} />
-                                        {!image ? (
-                                            <p>Add Image Here</p>
-                                        ) : (
-                                            <FlexBetween>
-                                                <Typography>{imageName}</Typography>
-                                                <IconButton>
-                                                    <EditOutlined />
-                                                </IconButton>
-                                            </FlexBetween>
-                                        )}
-                                    </Box>
-                                )}
-                            </Dropzone>
-                            {image && (<Box sx={{ width: "15%", textAlign: "center" }}>
-                                <IconButton onClick={() => setImage(null)} >
-                                    <DeleteOutlined />
+                                borderRadius: ".25rem",
+                                padding: '.5rem 1rem',
+                                margin: "1rem 0rem",
+                                display: "flex",
+                                alignItems: "flex-end",
+                                justifyContent: 'space-between'
+                            }}>
+                                <InputBase
+                                    placeholder="Share your thoughts..."
+                                    multiline
+                                    onChange={e => setComment(e.target.value)}
+                                    value={comment}
+                                    sx={{ width: "100%" }}
+                                />
+                                <IconButton onClick={postComment} disabled={!comment || comment.length > 2500 || comment.trim().length === 0}>
+                                    <SendIcon sx={{ color: "primary" }} />
                                 </IconButton>
-                            </Box>
+                            </div>
+                            {comment.length > 2500 && <Typography color="error.main">Comment can't be more than 2500 characters</Typography>}
+                            <Divider />
+
+                            {!loading1 && !loading2 && comments.map((comment, index) => (
+                                userData[comment._id] && <Comment key={`${comment._id}`} comment={comment} userData={userData[comment._id]} postId={postId} />
+                            ))}
+                            <Divider />
+                            {comments.length === 0 && (
+                                <>
+                                    <Typography color={main} sx={{ m: "0.5rem" }}>
+                                        No comments yet
+                                    </Typography>
+                                </>
                             )}
-                        </FlexBetween>
-                    </Box>}
+                        </Box>
+                    )}
+                </WidgetWrapper>
 
-                    <Divider sx={{ margin: "1.25rem 0" }} />
+                {/* Delete post Dialog */}
+                <Dialog
+                    open={openDialog}
+                    onClose={handleCloseDialog}
+                >
+                    <DialogTitle>
+                        Are you sure you want to delete this post?
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            This action cannot be undone.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseDialog}>Cancel</Button>
+                        <Button onClick={deletePost} autoFocus>
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
 
-                    <Box gap="0.2rem" onClick={toggleImage} sx={{ display: 'flex', "&:hover": { cursor: "pointer", color: palette.neutral.medium } }}>
-                        <ImageOutlined sx={{ color: palette.neutral.mediumMain }} />
-                        <Typography color={palette.neutral.mediumMain}>{!isImage ? "Add" : "Remove"} Image</Typography>
-                    </Box>
+                {/* Edit post Dialog */}
+                <Dialog
+                    open={openDialog2}
+                    onClose={handleCloseDialog2}
+                    fullWidth
+                >
+                    <DialogTitle>
+                        Edit Post
+                    </DialogTitle>
+                    <DialogContent>
+                        <Box gap="1.5rem">
+                            <TextField
+                                multiline
+                                onChange={e => setDescription(e.target.value)}
+                                value={description}
+                                label="Description"
+                                sx={{
+                                    width: "100%",
+                                    backgroundColor: palette.neutral.light,
+                                    marginTop: "1rem",
+                                }}
+                            />
+                        </Box>
+                        {description.length > 4000 && <Typography color="error.main">Post can't be more than 4000 characters</Typography>}
+                        {isImage && <Box
+                            border={`1px solid ${palette.neutral.medium}`}
+                            borderRadius="5px"
+                            mt='1rem'
+                            p="1rem"
+                        >
+                            <FlexBetween>
+                                <Dropzone
+                                    accept={{ "image/*": [".jpg", ".jpeg", ".png"] }}
+                                    multiple={false}
+                                    onDrop={async (acceptedFiles) => {
+                                        setImageName(acceptedFiles[0].name)
+                                        setImage(await convertToBase64(acceptedFiles[0]))
+                                    }}
+                                >
+                                    {({ getRootProps, getInputProps }) => (
+                                        <Box
+                                            {...getRootProps()}
+                                            border={`2px dashed ${palette.primary.main}`}
+                                            p="1rem"
+                                            width="100%"
+                                            sx={{
+                                                "&:hover": {
+                                                    cursor: "pointer"
+                                                },
+                                            }}
+                                        >
+                                            <input {...getInputProps()} />
+                                            {!image ? (
+                                                <p>Add Image Here</p>
+                                            ) : (
+                                                <FlexBetween>
+                                                    <Typography>{imageName}</Typography>
+                                                    <IconButton>
+                                                        <EditOutlined />
+                                                    </IconButton>
+                                                </FlexBetween>
+                                            )}
+                                        </Box>
+                                    )}
+                                </Dropzone>
+                                {image && (<Box sx={{ width: "15%", textAlign: "center" }}>
+                                    <IconButton onClick={() => setImage(null)} >
+                                        <DeleteOutlined />
+                                    </IconButton>
+                                </Box>
+                                )}
+                            </FlexBetween>
+                        </Box>}
+
+                        <Divider sx={{ margin: "1.25rem 0" }} />
+
+                        <Box gap="0.2rem" onClick={toggleImage} sx={{ display: 'flex', "&:hover": { cursor: "pointer", color: palette.neutral.medium } }}>
+                            <ImageOutlined sx={{ color: palette.neutral.mediumMain }} />
+                            <Typography color={palette.neutral.mediumMain}>{!isImage ? "Add" : "Remove"} Image</Typography>
+                        </Box>
 
 
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog2}>Cancel</Button>
-                    <Button onClick={editPost} disabled={description.length > 4000 || (image === postImg && desc === description) || description.trim().length === 0} autoFocus>
-                        Save
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseDialog2}>Cancel</Button>
+                        <Button onClick={editPost} disabled={description.length > 4000 || (image === postImg && desc === description) || description.trim().length === 0} autoFocus>
+                            Save
+                        </Button>
+                    </DialogActions>
+                </Dialog>
 
+            </>:<Loading loading={loading}/>}
         </>
     )
 }

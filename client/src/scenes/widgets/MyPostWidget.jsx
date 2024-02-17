@@ -7,6 +7,7 @@ import UserImage from 'components/UserImage'
 import WidgetWrapper from 'components/WidgetWrapper'
 import { useDispatch, useSelector } from 'react-redux'
 import { setPosts } from 'state'
+import Loading from 'components/Loading'
 
 export default function MyPostWidget({ profilePicture, name }) {
     const { palette } = useTheme()
@@ -20,6 +21,7 @@ export default function MyPostWidget({ profilePicture, name }) {
     const mediumMain = palette.neutral.mediumMain
     const medium = palette.neutral.medium
     const [imageName, setImageName] = useState("")
+    const [loading, setLoading] = useState(false)
 
     function convertToBase64(file) {
         return new Promise((resolve, reject) => {
@@ -43,6 +45,7 @@ export default function MyPostWidget({ profilePicture, name }) {
     }
 
     const handlePost = async () => {
+        setLoading(true)
         const formData = new FormData()
         formData.append("userId", _id)
         formData.append("desc", post.trim())
@@ -64,105 +67,107 @@ export default function MyPostWidget({ profilePicture, name }) {
         setImage(null)
         if(isImage) toggleImage()
         setPost("")
+        setLoading(false)
     }
 
-    return (
-        <WidgetWrapper>
-            <Box gap="1.5rem">
-                <Box gap="1rem" sx={{display:"flex",alignItems:"center",justifyContent:'flex-start'}}>
-                    <UserImage image={profilePicture} />
-                    <Typography
-                        variant="h4"
-                        color={palette.neutral.dark}
-                        fontWeight="500"
-                    >
-                        {name}
-                    </Typography>
+    return (<>
+            {!loading?<WidgetWrapper>
+                <Box gap="1.5rem">
+                    <Box gap="1rem" sx={{display:"flex",alignItems:"center",justifyContent:'flex-start'}}>
+                        <UserImage image={profilePicture} />
+                        <Typography
+                            variant="h4"
+                            color={palette.neutral.dark}
+                            fontWeight="500"
+                        >
+                            {name}
+                        </Typography>
+                    </Box>
+                    <InputBase
+                        placeholder="What's on your mind?"
+                        multiline
+                        onChange={e => setPost(e.target.value)}
+                        value={post}
+                        sx={{
+                            width: "100%",
+                            backgroundColor: palette.neutral.light,
+                            borderRadius: "2rem",
+                            padding: '1rem 2rem',
+                            marginTop: "1rem",
+                        }}
+                    />
                 </Box>
-                <InputBase
-                    placeholder="What's on your mind?"
-                    multiline
-                    onChange={e => setPost(e.target.value)}
-                    value={post}
-                    sx={{
-                        width: "100%",
-                        backgroundColor: palette.neutral.light,
-                        borderRadius: "2rem",
-                        padding: '1rem 2rem',
-                        marginTop: "1rem",
-                    }}
-                />
-            </Box>
-            {post.length>4000&&<Typography color="error.main">Post can't be more than 4000 characters</Typography>}
-            {isImage && <Box
-                border={`1px solid ${medium}`}
-                borderRadius="5px"
-                mt='1rem'
-                p="1rem"
-            >
+                {post.length>4000&&<Typography color="error.main">Post can't be more than 4000 characters</Typography>}
+                {isImage && <Box
+                    border={`1px solid ${medium}`}
+                    borderRadius="5px"
+                    mt='1rem'
+                    p="1rem"
+                >
+                    <FlexBetween>
+                        <Dropzone
+                            accept= {{"image/*":[".jpg",".jpeg",".png"]}}
+                            multiple={false}
+                            onDrop={async (acceptedFiles) => {
+                                setImageName(acceptedFiles[0].name)
+                                setImage(await convertToBase64(acceptedFiles[0]))
+                            }}
+                        >
+                            {({ getRootProps, getInputProps }) => (
+                                <Box
+                                    {...getRootProps()}
+                                    border={`2px dashed ${palette.primary.main}`}
+                                    p="1rem"
+                                    width="100%"
+                                    sx={{
+                                        "&:hover": {
+                                            cursor: "pointer"
+                                        },
+                                    }}
+                                >
+                                    <input {...getInputProps()} />
+                                    {!image ? (
+                                        <p>Add Image Here</p>
+                                    ) : (
+                                        <FlexBetween>
+                                            <Typography>{imageName}</Typography>
+                                            <IconButton>
+                                                <EditOutlined />
+                                            </IconButton>
+                                        </FlexBetween>
+                                    )}
+                                </Box>
+                            )}
+                        </Dropzone>
+                        {image && (<Box sx={{ width: "15%", textAlign: "center" }}>
+                            <IconButton onClick={() => setImage(null)} >
+                                <DeleteOutlined />
+                            </IconButton>
+                        </Box>
+                        )}
+                    </FlexBetween>
+                </Box>}
+
+                <Divider sx={{ margin: "1.25rem 0" }} />
+
                 <FlexBetween>
-                    <Dropzone
-                        acceptedFiles=".jpg,.jpeg,.png"
-                        multiple={false}
-                        onDrop={async (acceptedFiles) => {
-                            setImageName(acceptedFiles[0].name)
-                            setImage(await convertToBase64(acceptedFiles[0]))
+                    <FlexBetween gap="0.2rem" onClick={toggleImage} sx={{ "&:hover": { cursor: "pointer", color: medium } }}>
+                        <ImageOutlined sx={{ color: mediumMain }} />
+                        <Typography color={mediumMain}>{!isImage ? "Add" : "Remove"} Image</Typography>
+                    </FlexBetween>
+                    <Button
+                        disabled={!post || post.length>4000||post.trim().length===0}
+                        onClick={handlePost}
+                        sx={{
+                            backgroundColor: palette.primary.main,
+                            color: palette.background.alt,
+                            borderRadius: "3rem",
                         }}
                     >
-                        {({ getRootProps, getInputProps }) => (
-                            <Box
-                                {...getRootProps()}
-                                border={`2px dashed ${palette.primary.main}`}
-                                p="1rem"
-                                width="100%"
-                                sx={{
-                                    "&:hover": {
-                                        cursor: "pointer"
-                                    },
-                                }}
-                            >
-                                <input {...getInputProps()} />
-                                {!image ? (
-                                    <p>Add Image Here</p>
-                                ) : (
-                                    <FlexBetween>
-                                        <Typography>{imageName}</Typography>
-                                        <IconButton>
-                                            <EditOutlined />
-                                        </IconButton>
-                                    </FlexBetween>
-                                )}
-                            </Box>
-                        )}
-                    </Dropzone>
-                    {image && (<Box sx={{ width: "15%", textAlign: "center" }}>
-                        <IconButton onClick={() => setImage(null)} >
-                            <DeleteOutlined />
-                        </IconButton>
-                    </Box>
-                    )}
+                        POST
+                    </Button>
                 </FlexBetween>
-            </Box>}
-
-            <Divider sx={{ margin: "1.25rem 0" }} />
-
-            <FlexBetween>
-                <FlexBetween gap="0.2rem" onClick={toggleImage} sx={{ "&:hover": { cursor: "pointer", color: medium } }}>
-                    <ImageOutlined sx={{ color: mediumMain }} />
-                    <Typography color={mediumMain}>{!isImage ? "Add" : "Remove"} Image</Typography>
-                </FlexBetween>
-                <Button
-                    disabled={!post || post.length>4000||post.trim().length===0}
-                    onClick={handlePost}
-                    sx={{
-                        backgroundColor: palette.primary.main,
-                        color: palette.background.alt,
-                        borderRadius: "3rem",
-                    }}
-                >
-                    POST
-                </Button>
-            </FlexBetween>
-        </WidgetWrapper>
+            </WidgetWrapper>:<Loading loading={loading}/>}
+        </>
     )
 }
