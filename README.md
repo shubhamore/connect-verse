@@ -46,7 +46,7 @@ To run Connect-Verse locally, follow these steps:
 
 1. Clone this repository to your local machine.
 2. Navigate to the `client` directory and run `npm install` to install frontend dependencies.
-3. Create a `.env` file in the `client` directory and set the necessary environment variables (e.g., REACT_APP_BASE_URL, REACT_APP_FRONTEND_URL, REACT_APP_DEFAULT_USER_IMAGE).
+3. Create a `.env` file in the `client` directory and set the necessary environment variables (e.g., REACT_APP_BASE_URL, REACT_APP_DEFAULT_USER_IMAGE).
 4. Navigate to the `server` directory and run `npm install` to install backend dependencies.
 5. Create a `.env` file in the `server` directory and set the necessary environment variables (e.g., MONGO_URL, PORT, JWT_SECRET, CLOUD_NAME, CLOUD_KEY, CLOUD_KEY_SECRET).
 6. Run `npm start` in both the `client` and `server` directories to start the frontend and backend servers respectively.

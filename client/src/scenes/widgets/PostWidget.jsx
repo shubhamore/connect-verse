@@ -180,9 +180,17 @@ export default function PostWidget({ postId, userId, name, desc, postImg, likes,
     }
 
     function copyToClipboard() {
-        navigator.clipboard.writeText(`${process.env.REACT_APP_FRONTEND_URL}/post/${postId}`)
-        toast.info("Post link copied to clipboard", { position: 'top-right' })
-    }
+        const postUrl = `${window.location.origin}/post/${postId}`;
+        
+        navigator.clipboard.writeText(postUrl)
+            .then(() => {
+                toast.info("Post link copied to clipboard", { position: 'top-right' });
+            })
+            .catch(err => {
+                console.error('Could not copy text: ', err);
+                toast.error("Failed to copy link", { position: 'top-right' });
+            });
+    }    
 
     useEffect(() => {
         // Fetch user data for all comments when the component mounts

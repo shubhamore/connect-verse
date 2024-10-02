@@ -132,9 +132,18 @@ export default function MyProfile({ isUser = false }) {
     }
 
     function copyToClipboard() {
-        navigator.clipboard.writeText(`${process.env.REACT_APP_FRONTEND_URL}/profile/${isUser ? user._id : userId}`)
-        toast.info("Profile link copied to clipboard", { position: 'top-right' })
+        const profileUrl = `${window.location.origin}/profile/${isUser ? user._id : userId}`;
+        
+        navigator.clipboard.writeText(profileUrl)
+            .then(() => {
+                toast.info("Profile link copied to clipboard", { position: 'top-right' });
+            })
+            .catch(err => {
+                console.error('Could not copy text: ', err);
+                toast.error("Failed to copy link", { position: 'top-right' });
+            });
     }
+    
 
     return (
         <div>
